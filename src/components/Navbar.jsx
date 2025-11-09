@@ -8,12 +8,14 @@ import {
   Badge,
   IconButton,
   Box,
-    Drawer,
+  Drawer,
   List,
   ListItem,
   ListItemText,
   useMediaQuery,
   useTheme,
+  Button,
+  Container,
 } from '@mui/material';
 import SearchIcon from '../assets/icons/SearchIcon';
 import CartIcon from '../assets/icons/CartIcon';
@@ -30,6 +32,16 @@ const Navbar = () => {
   const { setSearchQuery: setProductSearchQuery } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Sync search query with URL
   useEffect(() => {
@@ -49,9 +61,7 @@ const Navbar = () => {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    // Update ProductContext immediately for real-time search
     setProductSearchQuery(value);
-    // Update URL for bookmarkability
     if (value.trim()) {
       navigate(`/search?q=${encodeURIComponent(value)}`, { replace: true });
     } else {
@@ -59,251 +69,346 @@ const Navbar = () => {
     }
   };
 
+  const navLinks = [
+    { text: 'Women', to: '/category/women' },
+    { text: 'Men', to: '/category/men' },
+    { text: 'Kids', to: '/category/kids' },
+    { text: 'Sale', to: '/category/sale' },
+  ];
+
   return (
     <AppBar 
       position="sticky" 
+      elevation={scrolled ? 4 : 0}
       sx={{ 
-        bgcolor: '#000', 
+        bgcolor: '#FFFFFF',
+        color: '#2b0000',
         zIndex: 1300,
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        borderBottom: scrolled ? 'none' : '1px solid rgba(84, 29, 34, 0.1)',
         transition: 'all 0.3s ease',
+        boxShadow: scrolled ? '0px 4px 20px rgba(84, 29, 34, 0.1)' : 'none',
       }}
     >
-      <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-        {/* Logo */}
-        <Link 
-          to="/" 
-          style={{ textDecoration: 'none', color: 'inherit' }}
+      <Container maxWidth="xl">
+        <Toolbar 
+          sx={{ 
+            justifyContent: 'space-between', 
+            py: 1.5,
+            minHeight: { xs: 64, md: 72 },
+          }}
         >
-          <Typography 
-            variant="h5" 
-            component="div" 
-            sx={{ 
-              fontWeight: 'bold', 
-              letterSpacing: 2,
-              background: 'linear-gradient(45deg, #fff 30%, #ff6b6b 90%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.05)',
-              },
-            }}
+          {/* Logo */}
+          <Link 
+            to="/" 
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            K-Store
-          </Typography>
-        </Link>
-
-        {/* Search Bar - Desktop */}
-        {!isMobile && (
-          <Box
-            component="form"
-            onSubmit={handleSearch}
-            sx={{
-              position: 'relative',
-              borderRadius: 2,
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              width: '40%',
-              maxWidth: 600,
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 12px rgba(255, 107, 107, 0.2)',
-              },
-              '&:focus-within': {
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 4px 16px rgba(255, 107, 107, 0.3)',
-              },
-            }}
-          >
-            <InputBase
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              sx={{
-                color: 'inherit',
-                width: '100%',
-                pl: 3,
-                pr: 1,
-                '&::placeholder': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                },
-              }}
-            />
-            <IconButton
-              type="submit"
+            <Typography 
+              variant="h5" 
+              component="div" 
               sx={{ 
-                color: 'inherit', 
-                position: 'absolute', 
-                right: 0,
+                fontWeight: 800,
+                fontSize: { xs: '1.25rem', md: '1.5rem' },
+                background: 'linear-gradient(135deg, #541d22 0%, #7a3a3f 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
                 transition: 'transform 0.3s ease',
+                letterSpacing: '-0.02em',
                 '&:hover': {
-                  transform: 'scale(1.1) rotate(5deg)',
+                  transform: 'scale(1.05)',
                 },
               }}
             >
-              <SearchIcon color="white" />
-            </IconButton>
-          </Box>
-        )}
+              K-Store
+            </Typography>
+          </Link>
 
-        {/* Right Side Icons */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* Mobile Menu Button */}
-          {isMobile && (
-            <IconButton
-              color="inherit"
-              onClick={() => setMobileMenuOpen(true)}
-              sx={{
-                transition: 'transform 0.3s ease',
-                '&:hover': {
-                  transform: 'rotate(90deg)',
-                },
-              }}
-            >
-              <MenuIcon color="white" />
-            </IconButton>
+          {/* Desktop Navigation Links */}
+          {!isMobile && (
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flex: 1, justifyContent: 'center', mx: 4 }}>
+              {navLinks.map((link) => (
+                <Button
+                  key={link.text}
+                  component={Link}
+                  to={link.to}
+                  sx={{
+                    color: location.pathname.includes(link.to) ? 'primary.main' : 'text.primary',
+                    fontWeight: location.pathname.includes(link.to) ? 600 : 500,
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      bgcolor: 'rgba(84, 29, 34, 0.08)',
+                      color: 'primary.main',
+                    },
+                  }}
+                >
+                  {link.text}
+                </Button>
+              ))}
+            </Box>
           )}
 
-          {/* Cart Icon */}
-          <IconButton 
-            color="inherit" 
-            component={Link} 
-            to="/cart"
-            sx={{
-              position: 'relative',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.1)',
-                '& svg': {
-                  animation: 'pulse 0.6s ease-in-out',
-                },
-              },
-            }}
-          >
-            <Badge 
-              badgeContent={cartItemCount} 
-              color="error"
+          {/* Search Bar - Desktop */}
+          {!isMobile && (
+            <Box
+              component="form"
+              onSubmit={handleSearch}
               sx={{
-                '& .MuiBadge-badge': {
-                  animation: cartItemCount > 0 ? 'pulse 2s ease-in-out infinite' : 'none',
-                },
+                position: 'relative',
+                flex: 1,
+                maxWidth: 500,
+                mx: 3,
               }}
             >
-              <CartIcon color="white" />
-            </Badge>
-          </IconButton>
+              <Box
+                sx={{
+                  position: 'relative',
+                  borderRadius: 3,
+                  backgroundColor: '#f5eded',
+                  border: '1px solid rgba(84, 29, 34, 0.2)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: '#FFFFFF',
+                    borderColor: 'primary.light',
+                  },
+                  '&:focus-within': {
+                    backgroundColor: '#FFFFFF',
+                    borderColor: 'primary.main',
+                    boxShadow: '0px 0px 0px 3px rgba(84, 29, 34, 0.1)',
+                  },
+                }}
+              >
+                <InputBase
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  sx={{
+                    color: 'text.primary',
+                    width: '100%',
+                    pl: 3,
+                    pr: 4,
+                    py: 1,
+                    fontSize: '0.95rem',
+                    '&::placeholder': {
+                      color: 'text.secondary',
+                      opacity: 0.7,
+                    },
+                  }}
+                />
+                <IconButton
+                  type="submit"
+                  sx={{ 
+                    color: 'text.secondary',
+                    position: 'absolute', 
+                    right: 4,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    p: 1,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      color: 'primary.main',
+                      transform: 'translateY(-50%) scale(1.1)',
+                    },
+                  }}
+                >
+                  <SearchIcon color="currentColor" />
+                </IconButton>
+              </Box>
+            </Box>
+          )}
 
-        </Box>
-      </Toolbar>
-
-      {/* Mobile Search */}
-      {isMobile && (
-        <Box sx={{ px: 2, pb: 1, animation: 'fadeIn 0.5s ease-out' }}>
-          <Box
-            component="form"
-            onSubmit={handleSearch}
-            sx={{
-              position: 'relative',
-              borderRadius: 2,
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              width: '100%',
-              transition: 'all 0.3s ease',
-              '&:focus-within': {
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 4px 12px rgba(255, 107, 107, 0.2)',
-              },
-            }}
-          >
-            <InputBase
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              sx={{
-                color: 'inherit',
-                width: '100%',
-                pl: 3,
-                pr: 1,
-                '&::placeholder': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                },
-              }}
-            />
-            <IconButton
-              type="submit"
-              sx={{ 
-                color: 'inherit', 
-                position: 'absolute', 
-                right: 0,
-                transition: 'transform 0.3s ease',
+          {/* Right Side Icons */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Mobile Menu Button */}
+            {isMobile && (
+              <IconButton
+                onClick={() => setMobileMenuOpen(true)}
+                sx={{
+                  color: 'text.primary',
+                  transition: 'transform 0.3s ease',
                 '&:hover': {
-                  transform: 'scale(1.1)',
+                  transform: 'rotate(90deg)',
+                  bgcolor: 'rgba(84, 29, 34, 0.08)',
                 },
+                }}
+              >
+                <MenuIcon color="currentColor" />
+              </IconButton>
+            )}
+
+            {/* Cart Icon */}
+            <IconButton 
+              component={Link} 
+              to="/cart"
+              sx={{
+                position: 'relative',
+                color: 'text.primary',
+                transition: 'all 0.3s ease',
+                p: 1.5,
+                  '&:hover': {
+                    bgcolor: 'rgba(84, 29, 34, 0.08)',
+                    transform: 'scale(1.1)',
+                  },
               }}
             >
-              <SearchIcon color="white" />
+              <Badge 
+                badgeContent={cartItemCount} 
+                color="error"
+                sx={{
+                  '& .MuiBadge-badge': {
+                    fontWeight: 600,
+                    fontSize: '0.7rem',
+                    minWidth: 20,
+                    height: 20,
+                    animation: cartItemCount > 0 ? 'pulse 2s ease-in-out infinite' : 'none',
+                  },
+                }}
+              >
+                <CartIcon color="currentColor" />
+              </Badge>
             </IconButton>
           </Box>
-        </Box>
-      )}
+        </Toolbar>
+
+        {/* Mobile Search */}
+        {isMobile && (
+          <Box sx={{ px: 2, pb: 2 }}>
+            <Box
+              component="form"
+              onSubmit={handleSearch}
+              sx={{
+                position: 'relative',
+                borderRadius: 3,
+                backgroundColor: '#f5eded',
+                border: '1px solid rgba(84, 29, 34, 0.2)',
+                transition: 'all 0.3s ease',
+                '&:focus-within': {
+                  backgroundColor: '#FFFFFF',
+                  borderColor: 'primary.main',
+                  boxShadow: '0px 0px 0px 3px rgba(84, 29, 34, 0.1)',
+                },
+              }}
+            >
+              <InputBase
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                sx={{
+                  color: 'text.primary',
+                  width: '100%',
+                  pl: 2,
+                  pr: 4,
+                  py: 1,
+                  '&::placeholder': {
+                    color: 'text.secondary',
+                    opacity: 0.7,
+                  },
+                }}
+              />
+              <IconButton
+                type="submit"
+                sx={{ 
+                  color: 'text.secondary',
+                  position: 'absolute', 
+                  right: 4,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  p: 1,
+                }}
+              >
+                <SearchIcon color="currentColor" />
+              </IconButton>
+            </Box>
+          </Box>
+        )}
+      </Container>
 
       {/* Mobile Drawer */}
       <Drawer
-        anchor="left"
+        anchor="right"
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         PaperProps={{
           sx: {
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
+            width: 280,
+            bgcolor: '#FFFFFF',
+            pt: 2,
+            borderLeft: '1px solid rgba(84, 29, 34, 0.1)',
           },
         }}
       >
-        <Box sx={{ width: 250, pt: 2 }}>
-          <List>
-            {[
-              { text: 'Home', to: '/' },
-              { text: 'Women', to: '/category/women' },
-              { text: 'Men', to: '/category/men' },
-              { text: 'Kids', to: '/category/kids' },
-              { text: 'Sale', to: '/category/sale' },
-              { text: 'Contact', to: '/contact' },
-            ].map((item, index) => (
-              <ListItem
-                key={item.text}
-                button
-                component={Link}
-                to={item.to}
-                onClick={() => setMobileMenuOpen(false)}
-                sx={{
-                  animation: `slideIn 0.3s ease-out ${index * 0.1}s both`,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    transform: 'translateX(10px)',
-                  },
-                  transition: 'all 0.3s ease',
+          <Box sx={{ px: 2, py: 1, borderBottom: '1px solid rgba(84, 29, 34, 0.1)', mb: 1 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
+              Menu
+            </Typography>
+          </Box>
+        <List>
+          <ListItem
+            button
+            component={Link}
+            to="/"
+            onClick={() => setMobileMenuOpen(false)}
+            sx={{
+              py: 1.5,
+              '&:hover': {
+                bgcolor: 'rgba(233, 30, 99, 0.08)',
+              },
+            }}
+          >
+            <ListItemText 
+              primary="Home"
+              primaryTypographyProps={{
+                sx: { fontWeight: 500 },
+              }}
+            />
+          </ListItem>
+          {navLinks.map((item) => (
+            <ListItem
+              key={item.text}
+              button
+              component={Link}
+              to={item.to}
+              onClick={() => setMobileMenuOpen(false)}
+              sx={{
+                py: 1.5,
+                '&:hover': {
+                  bgcolor: 'rgba(84, 29, 34, 0.08)',
+                },
+              }}
+            >
+              <ListItemText 
+                primary={item.text}
+                primaryTypographyProps={{
+                  sx: { fontWeight: 500 },
                 }}
-              >
-                <ListItemText 
-                  primary={item.text}
-                  primaryTypographyProps={{
-                    sx: { fontWeight: 500 },
-                  }}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
+              />
+            </ListItem>
+          ))}
+          <ListItem
+            button
+            component={Link}
+            to="/contact"
+            onClick={() => setMobileMenuOpen(false)}
+            sx={{
+              py: 1.5,
+              '&:hover': {
+                bgcolor: 'rgba(233, 30, 99, 0.08)',
+              },
+            }}
+          >
+            <ListItemText 
+              primary="Contact"
+              primaryTypographyProps={{
+                sx: { fontWeight: 500 },
+              }}
+            />
+          </ListItem>
+        </List>
       </Drawer>
     </AppBar>
   );
 };
 
 export default Navbar;
-
