@@ -155,8 +155,18 @@ const CategoryPage = () => {
                 <Button
                   variant="contained"
                   fullWidth
-                  sx={{ borderRadius: 0 }}
                   onClick={(e) => handleQuickAdd(product, e)}
+                  sx={{
+                    borderRadius: 50,
+                    py: 1.5,
+                    mt: 'auto',
+                    boxShadow: 'none',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '&:hover': {
+                      boxShadow: 'none',
+                      transform: 'translateY(-2px)',
+                    },
+                  }}
                 >
                   Quick Add
                 </Button>

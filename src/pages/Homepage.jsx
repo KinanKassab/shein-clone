@@ -503,7 +503,9 @@ const Homepage = () => {
                           },
                           '& .quick-add-btn': {
                             opacity: 1,
-                            transform: 'translateY(0)',
+                            maxHeight: '60px',
+                            paddingTop: '12px',
+                            paddingBottom: '12px',
                           },
                         },
                       }}
@@ -520,31 +522,6 @@ const Homepage = () => {
                             transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                           }}
                         />
-                        {/* Quick Add Button - Absolute positioned, hidden by default */}
-                        <Button
-                          variant="contained"
-                          className="quick-add-btn"
-                          onClick={(e) => handleQuickAdd(product, e)}
-                          sx={{
-                            position: 'absolute',
-                            bottom: 16,
-                            left: '50%',
-                            transform: 'translateX(-50%) translateY(10px)',
-                            borderRadius: 50,
-                            px: 3,
-                            py: 1,
-                            minWidth: 140,
-                            opacity: 0,
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            boxShadow: 'none',
-                            '&:hover': {
-                              boxShadow: 'none',
-                              transform: 'translateX(-50%) translateY(0) scale(1.05)',
-                            },
-                          }}
-                        >
-                          Quick Add
-                        </Button>
                         {product.featured && (
                           <Box
                             sx={{
@@ -626,6 +603,32 @@ const Homepage = () => {
                           </Box>
                         </CardContent>
                       </CardActionArea>
+                      {/* Quick Add Button - Hidden by default, shows on hover */}
+                      <Button
+                        variant="contained"
+                        className="quick-add-btn"
+                        onClick={(e) => handleQuickAdd(product, e)}
+                        fullWidth
+                        sx={{
+                          borderRadius: 50,
+                          py: 1.5,
+                          mt: 'auto',
+                          boxShadow: 'none',
+                          fontWeight: 600,
+                          fontSize: '0.9rem',
+                          opacity: 0,
+                          maxHeight: 0,
+                          overflow: 'hidden',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          '&:hover': {
+                            boxShadow: 'none',
+                            transform: 'translateY(-2px)',
+                            backgroundColor: 'primary.dark',
+                          },
+                        }}
+                      >
+                        Quick Add
+                      </Button>
                     </Card>
                   </Grid>
                 ))}
@@ -843,7 +846,9 @@ const Homepage = () => {
                       },
                       '& .quick-add-btn': {
                         opacity: 1,
-                        transform: 'translateY(0)',
+                        maxHeight: '60px',
+                        paddingTop: '12px',
+                        paddingBottom: '12px',
                       },
                     },
                   }}
@@ -860,31 +865,6 @@ const Homepage = () => {
                         transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                       }}
                     />
-                    {/* Quick Add Button - Absolute positioned, hidden by default */}
-                    <Button
-                      variant="contained"
-                      className="quick-add-btn"
-                      onClick={(e) => handleQuickAdd(product, e)}
-                      sx={{
-                        position: 'absolute',
-                        bottom: 16,
-                        left: '50%',
-                        transform: 'translateX(-50%) translateY(10px)',
-                        borderRadius: 50,
-                        px: 3,
-                        py: 1,
-                        minWidth: 140,
-                        opacity: 0,
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        boxShadow: 'none',
-                        '&:hover': {
-                          boxShadow: 'none',
-                          transform: 'translateX(-50%) translateY(0) scale(1.05)',
-                        },
-                      }}
-                    >
-                      Quick Add
-                    </Button>
                     {product.featured && (
                       <Box
                         sx={{
@@ -966,6 +946,32 @@ const Homepage = () => {
                       </Box>
                     </CardContent>
                   </CardActionArea>
+                  {/* Quick Add Button - Hidden by default, shows on hover */}
+                  <Button
+                    variant="contained"
+                    className="quick-add-btn"
+                    onClick={(e) => handleQuickAdd(product, e)}
+                    fullWidth
+                    sx={{
+                      borderRadius: 50,
+                      py: 1.5,
+                      mt: 'auto',
+                      boxShadow: 'none',
+                      fontWeight: 600,
+                      fontSize: '0.9rem',
+                      opacity: 0,
+                      maxHeight: 0,
+                      overflow: 'hidden',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        boxShadow: 'none',
+                        transform: 'translateY(-2px)',
+                        backgroundColor: 'primary.dark',
+                      },
+                    }}
+                  >
+                    Quick Add
+                  </Button>
                 </Card>
               </Grid>
             ))}
