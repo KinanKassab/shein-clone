@@ -300,30 +300,3 @@ export const banners = [
   },
 ];
 
-export const reviews = [
-  {
-    id: 1,
-    productId: 1,
-    userName: 'Sarah M.',
-    rating: 5,
-    comment: 'Love this dress! Perfect fit and great quality. Highly recommend!',
-    date: '2024-01-15',
-  },
-  {
-    id: 2,
-    productId: 1,
-    userName: 'Emma L.',
-    rating: 4,
-    comment: 'Beautiful dress, runs a bit small. Size up if you\'re between sizes.',
-    date: '2024-01-10',
-  },
-  {
-    id: 3,
-    productId: 2,
-    userName: 'John D.',
-    rating: 5,
-    comment: 'Great quality t-shirt. Very comfortable and true to size.',
-    date: '2024-01-12',
-  },
-];
-

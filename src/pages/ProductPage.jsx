@@ -11,9 +11,6 @@ import {
   FormControl,
   InputLabel,
   Rating,
-  TextField,
-  Card,
-  CardContent,
   Divider,
   IconButton,
   Chip,
@@ -25,7 +22,6 @@ import {
 import { ArrowBack, ArrowForward, Close as CloseIcon } from '@mui/icons-material';
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
-import { reviews } from '../data/mockData';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -38,8 +34,6 @@ const ProductPage = () => {
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
-  const [productReviews, setProductReviews] = useState([]);
-  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
 
   useEffect(() => {
     const foundProduct = getProductById(id);
@@ -47,7 +41,6 @@ const ProductPage = () => {
       setProduct(foundProduct);
       setSelectedSize(foundProduct.sizes[0]);
       setSelectedColor(foundProduct.colors[0]);
-      setProductReviews(reviews.filter((r) => r.productId === parseInt(id)));
     }
   }, [id, getProductById]);
 
@@ -77,20 +70,6 @@ const ProductPage = () => {
 
   const handlePrevImage = () => {
     setSelectedImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
-  };
-
-  const handleSubmitReview = () => {
-    const newReview = {
-      id: Date.now(),
-      productId: product.id,
-      userName: 'You',
-      rating: reviewForm.rating,
-      comment: reviewForm.comment,
-      date: new Date().toISOString().split('T')[0],
-    };
-    setProductReviews([...productReviews, newReview]);
-    setReviewForm({ rating: 5, comment: '' });
-    alert('Review submitted!');
   };
 
   return (
@@ -288,59 +267,6 @@ const ProductPage = () => {
           </Button>
         </Grid>
       </Grid>
-
-      {/* Product Reviews Section */}
-      <Box sx={{ mt: 6 }}>
-        <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
-          Reviews ({productReviews.length})
-        </Typography>
-
-        {/* Review Form */}
-        <Card sx={{ mb: 3, p: 2 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Write a Review
-          </Typography>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Rating
-            </Typography>
-            <Rating
-              value={reviewForm.rating}
-              onChange={(e, newValue) =>
-                setReviewForm({ ...reviewForm, rating: newValue })
-              }
-            />
-          </Box>
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            placeholder="Write your review..."
-            value={reviewForm.comment}
-            onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-          <Button variant="contained" onClick={handleSubmitReview}>
-            Submit Review
-          </Button>
-        </Card>
-
-        {/* Reviews List */}
-        {productReviews.map((review) => (
-          <Card key={review.id} sx={{ mb: 2, p: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                {review.userName}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {review.date}
-              </Typography>
-            </Box>
-            <Rating value={review.rating} readOnly size="small" sx={{ mb: 1 }} />
-            <Typography variant="body2">{review.comment}</Typography>
-          </Card>
-        ))}
-      </Box>
 
       {/* Size Guide Dialog */}
       <Dialog open={showSizeGuide} onClose={() => setShowSizeGuide(false)} maxWidth="md" fullWidth>
