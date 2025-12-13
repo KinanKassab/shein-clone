@@ -11,7 +11,7 @@ import {
   CardActionArea,
   Chip,
   Button,
-  CircularProgress,
+  Skeleton,
   Select,
   MenuItem,
   FormControl,
@@ -22,6 +22,11 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Popover,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
 } from '@mui/material';
 import { ExpandMore, FilterList } from '@mui/icons-material';
 import { useProducts } from '../contexts/ProductContext';
@@ -34,7 +39,16 @@ const Homepage = () => {
   const { addToCart } = useCart();
   const [displayedProducts, setDisplayedProducts] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
+  const [categoryAnchor, setCategoryAnchor] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const observerRef = useRef(null);
+
+  // Simulate loading state for skeleton demonstration
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Sync search query from URL
   useEffect(() => {
@@ -106,113 +120,203 @@ const Homepage = () => {
     }));
   };
 
-  return (
-    <Box>
-        {/* Banner Carousel */}
-      <Box sx={{ mb: 4, animation: 'fadeIn 0.8s ease-out' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            overflowX: 'auto',
-            scrollSnapType: 'x mandatory',
-            gap: 2,
-            pb: 2,
-            scrollBehavior: 'smooth',
-            '&::-webkit-scrollbar': { height: 8 },
-            '&::-webkit-scrollbar-thumb': { 
-              bgcolor: 'grey.300', 
-              borderRadius: 1,
-              '&:hover': {
-                bgcolor: 'grey.400',
-              },
-            },
-          }}
-        >
-          {banners.map((banner, index) => (
-            <Box
-              key={banner.id}
-              component={Link}
-              to={banner.link}
-              sx={{
-                minWidth: '100%',
-                height: 300,
-                backgroundImage: `url(${banner.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                color: 'white',
-                textDecoration: 'none',
-                scrollSnapAlign: 'start',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'transform 0.3s ease',
-                animation: `fadeIn 0.8s ease-out ${index * 0.2}s both`,
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  bgcolor: 'rgba(0,0,0,0.4)',
-                  transition: 'background-color 0.3s ease',
-                },
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: '-100%',
-                  width: '100%',
-                  height: '100%',
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                  transition: 'left 0.5s ease',
-                },
-                '&:hover': {
-                  transform: 'scale(1.02)',
-                  '&::before': {
-                    bgcolor: 'rgba(0,0,0,0.3)',
-                  },
-                  '&::after': {
-                    left: '100%',
-                  },
-                  '& > *': {
-                    transform: 'scale(1.05)',
-                  },
-                },
-                '& > *': { 
-                  position: 'relative', 
-                  zIndex: 1,
-                  transition: 'transform 0.3s ease',
-                },
-              }}
-            >
-              <Typography 
-                variant="h3" 
-                sx={{ 
-                  fontWeight: 'bold', 
-                  mb: 1,
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                }}
-              >
-                {banner.title}
-              </Typography>
-              <Typography 
-                variant="h5"
-                sx={{
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-                }}
-              >
-                {banner.subtitle}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-      </Box>
+  const handleCategoryHover = (event, category) => {
+    if (category.subcategories && category.subcategories.length > 0) {
+      setCategoryAnchor(event.currentTarget);
+      setSelectedCategory(category);
+    }
+  };
 
+  const handleCategoryLeave = () => {
+    setCategoryAnchor(null);
+    setSelectedCategory(null);
+  };
+
+  return (
+    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
       <Container>
+        {/* Modern Bento-Grid Hero Section */}
+        {/* Asymmetrical grid: Left 66% (Desktop), Right 33% (Desktop) */}
+        {!searchQuery && (
+          <Box sx={{ mb: 6, mt: 4 }}>
+            <Grid container spacing={2} sx={{ height: { xs: 'auto', md: 500 } }}>
+              {/* Left: Large Hero Image (66% on desktop, full width on mobile) */}
+              <Grid item xs={12} md={8}>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    height: { xs: 300, md: '100%' },
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    backgroundImage: `url(${banners[0]?.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200'})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: 'linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(107, 114, 128, 0.4) 100%)',
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      zIndex: 1,
+                      textAlign: 'center',
+                      color: 'white',
+                    }}
+                  >
+                    <Typography
+                      variant="h2"
+                      sx={{
+                        fontWeight: 700,
+                        mb: 2,
+                        fontSize: { xs: '2rem', md: '3rem' },
+                        textShadow: '2px 2px 12px rgba(0, 0, 0, 0.5)',
+                      }}
+                    >
+                      {banners[0]?.title || 'Summer Sale'}
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        mb: 3,
+                        fontSize: { xs: '1.25rem', md: '1.5rem' },
+                        textShadow: '1px 1px 6px rgba(0, 0, 0, 0.5)',
+                      }}
+                    >
+                      {banners[0]?.subtitle || 'Up to 50% OFF'}
+                    </Typography>
+                    <Button
+                      component={Link}
+                      to={banners[0]?.link || '/category/sale'}
+                      variant="contained"
+                      size="large"
+                      sx={{
+                        borderRadius: 50,
+                        px: 4,
+                        py: 1.5,
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        boxShadow: 'none',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.3)',
+                        },
+                      }}
+                    >
+                      Shop Now
+                    </Button>
+                  </Box>
+                </Box>
+              </Grid>
+
+              {/* Right: Vertical Stack of Two Feature Cards (33% on desktop, full width on mobile) */}
+              <Grid item xs={12} md={4}>
+                <Grid container spacing={2} sx={{ height: '100%' }}>
+                  {/* New Arrivals Card */}
+                  <Grid item xs={12} sx={{ flex: 1 }}>
+                    <Card
+                      component={Link}
+                      to="/category/new"
+                      sx={{
+                        height: '100%',
+                        position: 'relative',
+                        borderRadius: 3,
+                        overflow: 'hidden',
+                        border: '1px solid rgba(0, 0, 0, 0.08)',
+                        backgroundImage: `url(${banners[1]?.image || 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200'})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        p: 3,
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                        },
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          background: 'linear-gradient(to top, rgba(26, 26, 26, 0.7) 0%, transparent 100%)',
+                        },
+                      }}
+                    >
+                      <Box sx={{ position: 'relative', zIndex: 1, color: 'white' }}>
+                        <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                          {banners[1]?.title || 'New Arrivals'}
+                        </Typography>
+                        <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                          {banners[1]?.subtitle || 'Latest Fashion Trends'}
+                        </Typography>
+                      </Box>
+                    </Card>
+                  </Grid>
+
+                  {/* Flash Sale Card */}
+                  <Grid item xs={12} sx={{ flex: 1 }}>
+                    <Card
+                      component={Link}
+                      to="/category/sale"
+                      sx={{
+                        height: '100%',
+                        position: 'relative',
+                        borderRadius: 3,
+                        overflow: 'hidden',
+                        border: '1px solid rgba(0, 0, 0, 0.08)',
+                        backgroundImage: `url(${banners[2]?.image || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200'})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        p: 3,
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                        },
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          background: 'linear-gradient(to top, rgba(26, 26, 26, 0.7) 0%, transparent 100%)',
+                        },
+                      }}
+                    >
+                      <Box sx={{ position: 'relative', zIndex: 1, color: 'white' }}>
+                        <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                          {banners[2]?.title || 'Flash Sale'}
+                        </Typography>
+                        <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                          {banners[2]?.subtitle || 'Limited Time Offer'}
+                        </Typography>
+                      </Box>
+                    </Card>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+
         {/* Categories */}
         <Box sx={{ mb: 4, animation: 'fadeIn 0.6s ease-out' }}>
           <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -238,59 +342,116 @@ const Homepage = () => {
             {categories.map((category, index) => (
               <Box
                 key={category.id}
-                component={Link}
-                to={`/category/${category.name.toLowerCase()}`}
+                onMouseEnter={(e) => handleCategoryHover(e, category)}
+                onMouseLeave={handleCategoryLeave}
                 sx={{
                   minWidth: 120,
                   textAlign: 'center',
-                  textDecoration: 'none',
-                  color: 'inherit',
+                  position: 'relative',
                   animation: `scaleIn 0.5s ease-out ${index * 0.1}s both`,
-                  '&:hover': { 
-                    transform: 'translateY(-8px) scale(1.05)',
-                    '& .category-icon': {
-                      transform: 'scale(1.1) rotate(5deg)',
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
-                    },
-                  },
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
               >
                 <Box
-                  className="category-icon"
+                  component={Link}
+                  to={`/category/${category.name.toLowerCase()}`}
                   sx={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: '50%',
-                    bgcolor: 'grey.100',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 40,
-                    mb: 1,
-                    mx: 'auto',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                  }}
-                >
-                  {category.icon}
-                </Box>
-                <Typography 
-                  variant="body2"
-                  sx={{
-                    fontWeight: 500,
-                    transition: 'color 0.3s ease',
-                    '&:hover': {
-                      color: 'primary.main',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    display: 'block',
+                    '&:hover': { 
+                      transform: 'translateY(-8px) scale(1.05)',
+                      '& .category-icon': {
+                        transform: 'scale(1.1) rotate(5deg)',
+                        boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+                      },
                     },
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
                 >
-                  {category.name}
-                </Typography>
+                  <Box
+                    className="category-icon"
+                    sx={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: '50%',
+                      bgcolor: 'grey.100',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 40,
+                      mb: 1,
+                      mx: 'auto',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                    }}
+                  >
+                    {category.icon}
+                  </Box>
+                  <Typography 
+                    variant="body2"
+                    sx={{
+                      fontWeight: 500,
+                      transition: 'color 0.3s ease',
+                      '&:hover': {
+                        color: 'primary.main',
+                      },
+                    }}
+                  >
+                    {category.name}
+                  </Typography>
+                </Box>
               </Box>
             ))}
           </Box>
         </Box>
+
+        {/* Subcategories Popover */}
+        <Popover
+          open={Boolean(categoryAnchor)}
+          anchorEl={categoryAnchor}
+          onClose={handleCategoryLeave}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          disableRestoreFocus
+          sx={{
+            pointerEvents: 'none',
+            '& .MuiPopover-paper': {
+              pointerEvents: 'auto',
+              mt: 1,
+              minWidth: 200,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+            },
+          }}
+          onMouseLeave={handleCategoryLeave}
+        >
+          {selectedCategory && selectedCategory.subcategories && selectedCategory.subcategories.length > 0 && (
+            <List sx={{ py: 1 }}>
+              {selectedCategory.subcategories.map((subcategory) => (
+                <ListItem key={subcategory} disablePadding>
+                  <ListItemButton
+                    component={Link}
+                    to={`/category/${selectedCategory.name.toLowerCase()}/${subcategory.toLowerCase().replace(/\s+/g, '-')}`}
+                    onClick={handleCategoryLeave}
+                    sx={{
+                      '&:hover': {
+                        bgcolor: 'primary.light',
+                        color: 'white',
+                      },
+                    }}
+                  >
+                    <ListItemText primary={subcategory} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          )}
+        </Popover>
 
         {/* Featured Products - Only show if not searching */}
         {!searchQuery && (
@@ -298,156 +459,178 @@ const Homepage = () => {
             <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
               Featured Products
             </Typography>
-            <Grid container spacing={3}>
-              {featuredProducts.slice(0, 4).map((product, index) => (
-                <Grid 
-                  item 
-                  xs={6} 
-                  sm={4} 
-                  md={3} 
-                  key={product.id}
-                  sx={{
-                    animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`,
-                  }}
-                >
-                  <Card 
-                    sx={{ 
-                      height: '100%', 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      overflow: 'hidden',
-                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                      '&:hover': {
-                        transform: 'translateY(-12px)',
-                        boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                        '& .product-image': {
-                          transform: 'scale(1.1)',
-                        },
-                        '& .quick-add-btn': {
-                          opacity: 1,
-                          transform: 'translateY(0)',
-                        },
-                      },
+            {isLoading ? (
+              <Grid container spacing={3}>
+                {[...Array(4)].map((_, index) => (
+                  <Grid item xs={6} sm={4} md={3} key={index}>
+                    <Skeleton variant="rectangular" height={250} sx={{ borderRadius: 2, mb: 1 }} />
+                    <Skeleton variant="text" width="80%" height={24} sx={{ mb: 1 }} />
+                    <Skeleton variant="text" width="40%" height={20} />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Grid container spacing={3}>
+                {featuredProducts.slice(0, 4).map((product, index) => (
+                  <Grid 
+                    item 
+                    xs={6} 
+                    sm={4} 
+                    md={3} 
+                    key={product.id}
+                    sx={{
+                      animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`,
                     }}
                   >
-                    <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-                      <CardMedia
-                        component="img"
-                        height="250"
-                        image={product.images[0]}
-                        alt={product.name}
-                        className="product-image"
-                        sx={{ 
-                          objectFit: 'cover',
-                          transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                        }}
-                      />
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          bgcolor: 'rgba(255, 107, 107, 0.9)',
-                          color: 'white',
-                          px: 1.5,
-                          py: 0.5,
-                          borderRadius: 1,
-                          fontSize: '0.75rem',
-                          fontWeight: 'bold',
-                          animation: 'pulse 2s ease-in-out infinite',
-                        }}
-                      >
-                        FEATURED
-                      </Box>
-                    </Box>
-                    <CardActionArea component={Link} to={`/product/${product.id}`}>
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography 
-                          variant="body2" 
-                          noWrap 
+                    {/* Glassmorphism Product Card */}
+                    <Card 
+                      sx={{ 
+                        height: '100%', 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        // Glassmorphism: transparent background, subtle border, no shadow
+                        bgcolor: 'rgba(255, 255, 255, 0.7)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(0, 0, 0, 0.08)',
+                        boxShadow: 'none',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        '&:hover': {
+                          transform: 'translateY(-8px)',
+                          borderColor: 'rgba(0, 0, 0, 0.12)',
+                          '& .product-image': {
+                            transform: 'scale(1.05)',
+                          },
+                          '& .quick-add-btn': {
+                            opacity: 1,
+                            transform: 'translateY(0)',
+                          },
+                        },
+                      }}
+                    >
+                      <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+                        <CardMedia
+                          component="img"
+                          height="250"
+                          image={product.images[0]}
+                          alt={product.name}
+                          className="product-image"
                           sx={{ 
-                            mb: 1,
-                            fontWeight: 500,
-                            transition: 'color 0.3s ease',
+                            objectFit: 'cover',
+                            transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                          }}
+                        />
+                        {/* Quick Add Button - Absolute positioned, hidden by default */}
+                        <Button
+                          variant="contained"
+                          className="quick-add-btn"
+                          onClick={(e) => handleQuickAdd(product, e)}
+                          sx={{
+                            position: 'absolute',
+                            bottom: 16,
+                            left: '50%',
+                            transform: 'translateX(-50%) translateY(10px)',
+                            borderRadius: 50,
+                            px: 3,
+                            py: 1,
+                            minWidth: 140,
+                            opacity: 0,
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            boxShadow: 'none',
                             '&:hover': {
-                              color: 'primary.main',
+                              boxShadow: 'none',
+                              transform: 'translateX(-50%) translateY(0) scale(1.05)',
                             },
                           }}
                         >
-                          {product.name}
-                        </Typography>
-                        <Chip
-                          label={product.category}
-                          size="small"
-                          sx={{ 
-                            mb: 1, 
-                            fontSize: '0.7rem', 
-                            height: 20,
-                            bgcolor: 'primary.main',
-                            color: 'white',
-                            fontWeight: 500,
-                          }}
-                        />
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                          <Typography 
-                            variant="h6" 
-                            color="primary" 
-                            sx={{ 
+                          Quick Add
+                        </Button>
+                        {product.featured && (
+                          <Box
+                            sx={{
+                              position: 'absolute',
+                              top: 8,
+                              right: 8,
+                              bgcolor: 'rgba(26, 26, 26, 0.9)',
+                              color: 'white',
+                              px: 1.5,
+                              py: 0.5,
+                              borderRadius: 2,
+                              fontSize: '0.75rem',
                               fontWeight: 'bold',
-                              fontSize: '1.1rem',
                             }}
                           >
-                            ${product.price}
+                            FEATURED
+                          </Box>
+                        )}
+                      </Box>
+                      <CardActionArea component={Link} to={`/product/${product.id}`}>
+                        <CardContent sx={{ flexGrow: 1, bgcolor: 'transparent' }}>
+                          <Typography 
+                            variant="body2" 
+                            noWrap 
+                            sx={{ 
+                              mb: 1,
+                              fontWeight: 500,
+                              transition: 'color 0.3s ease',
+                              '&:hover': {
+                                color: 'primary.main',
+                              },
+                            }}
+                          >
+                            {product.name}
                           </Typography>
-                          {product.originalPrice && (
-                            <Typography
-                              variant="body2"
+                          <Chip
+                            label={product.category}
+                            size="small"
+                            sx={{ 
+                              mb: 1, 
+                              fontSize: '0.7rem', 
+                              height: 20,
+                              bgcolor: 'primary.main',
+                              color: 'white',
+                              fontWeight: 500,
+                            }}
+                          />
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                            <Typography 
+                              variant="h6" 
+                              color="primary" 
                               sx={{ 
-                                textDecoration: 'line-through', 
-                                color: 'grey.500',
-                                fontSize: '0.85rem',
+                                fontWeight: 'bold',
+                                fontSize: '1.1rem',
                               }}
                             >
-                              ${product.originalPrice}
+                              ${product.price}
                             </Typography>
-                          )}
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                          <Typography variant="caption" color="text.secondary">
-                            ⭐ {product.rating}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            ({product.reviews})
-                          </Typography>
-                        </Box>
-                      </CardContent>
-                    </CardActionArea>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      className="quick-add-btn"
-                      sx={{ 
-                        borderRadius: 0,
-                        bgcolor: 'primary.main',
-                        fontWeight: 'bold',
-                        py: 1.5,
-                        transition: 'all 0.3s ease',
-                        opacity: 0.9,
-                        '&:hover': {
-                          bgcolor: 'primary.dark',
-                          transform: 'scale(1.02)',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                        },
-                      }}
-                      onClick={(e) => handleQuickAdd(product, e)}
-                    >
-                      Quick Add
-                    </Button>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+                            {product.originalPrice && (
+                              <Typography
+                                variant="body2"
+                                sx={{ 
+                                  textDecoration: 'line-through', 
+                                  color: 'text.secondary',
+                                  fontSize: '0.85rem',
+                                }}
+                              >
+                                ${product.originalPrice}
+                              </Typography>
+                            )}
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Typography variant="caption" color="text.secondary">
+                              ⭐ {product.rating}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              ({product.reviews})
+                            </Typography>
+                          </Box>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
           </Box>
         )}
 
@@ -484,7 +667,10 @@ const Homepage = () => {
                     <InputLabel>Category</InputLabel>
                     <Select
                       value={filters.category}
-                      onChange={(e) => handleFilterChange('category', e.target.value)}
+                      onChange={(e) => {
+                        handleFilterChange('category', e.target.value);
+                        handleFilterChange('subcategory', 'All');
+                      }}
                       label="Category"
                     >
                       <MenuItem value="All">All</MenuItem>
@@ -493,6 +679,26 @@ const Homepage = () => {
                           {cat.name}
                         </MenuItem>
                       ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <FormControl fullWidth>
+                    <InputLabel>Subcategory</InputLabel>
+                    <Select
+                      value={filters.subcategory || 'All'}
+                      onChange={(e) => handleFilterChange('subcategory', e.target.value)}
+                      label="Subcategory"
+                      disabled={filters.category === 'All' || !categories.find(c => c.name === filters.category)?.subcategories?.length}
+                    >
+                      <MenuItem value="All">All</MenuItem>
+                      {categories
+                        .find(c => c.name === filters.category)
+                        ?.subcategories?.map((subcat) => (
+                          <MenuItem key={subcat} value={subcat}>
+                            {subcat}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                 </Grid>
@@ -568,6 +774,40 @@ const Homepage = () => {
               {searchQuery ? 'Try a different search term' : 'Try adjusting your filters'}
             </Typography>
           </Box>
+        ) : isLoading ? (
+          // Skeleton Loading State - Mirrors exact grid structure
+          <Grid container spacing={3}>
+            {[...Array(8)].map((_, index) => (
+              <Grid item xs={6} sm={4} md={3} key={index}>
+                <Skeleton 
+                  variant="rectangular" 
+                  height={250} 
+                  sx={{ 
+                    borderRadius: 2, 
+                    mb: 1,
+                    bgcolor: 'rgba(0, 0, 0, 0.05)',
+                  }} 
+                />
+                <Skeleton 
+                  variant="text" 
+                  width="80%" 
+                  height={24} 
+                  sx={{ mb: 1 }} 
+                />
+                <Skeleton 
+                  variant="text" 
+                  width="60%" 
+                  height={20} 
+                  sx={{ mb: 0.5 }} 
+                />
+                <Skeleton 
+                  variant="text" 
+                  width="40%" 
+                  height={18} 
+                />
+              </Grid>
+            ))}
+          </Grid>
         ) : (
           <Grid container spacing={3}>
             {products.slice(0, displayedProducts).map((product, index) => (
@@ -581,20 +821,25 @@ const Homepage = () => {
                   animation: `fadeIn 0.6s ease-out ${(index % 12) * 0.05}s both`,
                 }}
               >
+                {/* Glassmorphism Product Card */}
                 <Card 
                   sx={{ 
                     height: '100%', 
                     display: 'flex', 
                     flexDirection: 'column',
                     overflow: 'hidden',
+                    // Glassmorphism: transparent background, subtle border, no shadow
+                    bgcolor: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                    boxShadow: 'none',
                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                     cursor: 'pointer',
                     '&:hover': {
-                      transform: 'translateY(-12px)',
-                      boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+                      transform: 'translateY(-8px)',
+                      borderColor: 'rgba(0, 0, 0, 0.12)',
                       '& .product-image': {
-                        transform: 'scale(1.1)',
+                        transform: 'scale(1.05)',
                       },
                       '& .quick-add-btn': {
                         opacity: 1,
@@ -615,20 +860,44 @@ const Homepage = () => {
                         transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                       }}
                     />
+                    {/* Quick Add Button - Absolute positioned, hidden by default */}
+                    <Button
+                      variant="contained"
+                      className="quick-add-btn"
+                      onClick={(e) => handleQuickAdd(product, e)}
+                      sx={{
+                        position: 'absolute',
+                        bottom: 16,
+                        left: '50%',
+                        transform: 'translateX(-50%) translateY(10px)',
+                        borderRadius: 50,
+                        px: 3,
+                        py: 1,
+                        minWidth: 140,
+                        opacity: 0,
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: 'none',
+                        '&:hover': {
+                          boxShadow: 'none',
+                          transform: 'translateX(-50%) translateY(0) scale(1.05)',
+                        },
+                      }}
+                    >
+                      Quick Add
+                    </Button>
                     {product.featured && (
                       <Box
                         sx={{
                           position: 'absolute',
                           top: 8,
                           right: 8,
-                          bgcolor: 'rgba(255, 107, 107, 0.9)',
+                          bgcolor: 'rgba(26, 26, 26, 0.9)',
                           color: 'white',
                           px: 1.5,
                           py: 0.5,
-                          borderRadius: 1,
+                          borderRadius: 2,
                           fontSize: '0.75rem',
                           fontWeight: 'bold',
-                          animation: 'pulse 2s ease-in-out infinite',
                         }}
                       >
                         FEATURED
@@ -636,7 +905,7 @@ const Homepage = () => {
                     )}
                   </Box>
                   <CardActionArea component={Link} to={`/product/${product.id}`}>
-                    <CardContent sx={{ flexGrow: 1 }}>
+                    <CardContent sx={{ flexGrow: 1, bgcolor: 'transparent' }}>
                       <Typography 
                         variant="body2" 
                         noWrap 
@@ -679,7 +948,7 @@ const Homepage = () => {
                             variant="body2"
                             sx={{ 
                               textDecoration: 'line-through', 
-                              color: 'grey.500',
+                              color: 'text.secondary',
                               fontSize: '0.85rem',
                             }}
                           >
@@ -697,37 +966,41 @@ const Homepage = () => {
                       </Box>
                     </CardContent>
                   </CardActionArea>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    className="quick-add-btn"
-                    sx={{ 
-                      borderRadius: 0,
-                      bgcolor: 'primary.main',
-                      fontWeight: 'bold',
-                      py: 1.5,
-                      transition: 'all 0.3s ease',
-                      opacity: 0.9,
-                      '&:hover': {
-                        bgcolor: 'primary.dark',
-                        transform: 'scale(1.02)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                      },
-                    }}
-                    onClick={(e) => handleQuickAdd(product, e)}
-                  >
-                    Quick Add
-                  </Button>
                 </Card>
               </Grid>
             ))}
           </Grid>
         )}
 
-        {/* Infinite Scroll Trigger */}
+        {/* Infinite Scroll Trigger - Using Skeleton instead of CircularProgress */}
         {displayedProducts < products.length && (
           <Box ref={observerRef} sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-            <CircularProgress />
+            <Grid container spacing={3}>
+              {[...Array(4)].map((_, index) => (
+                <Grid item xs={6} sm={4} md={3} key={index}>
+                  <Skeleton 
+                    variant="rectangular" 
+                    height={250} 
+                    sx={{ 
+                      borderRadius: 2, 
+                      mb: 1,
+                      bgcolor: 'rgba(0, 0, 0, 0.05)',
+                    }} 
+                  />
+                  <Skeleton 
+                    variant="text" 
+                    width="80%" 
+                    height={24} 
+                    sx={{ mb: 1 }} 
+                  />
+                  <Skeleton 
+                    variant="text" 
+                    width="60%" 
+                    height={20} 
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Box>
         )}
       </Container>

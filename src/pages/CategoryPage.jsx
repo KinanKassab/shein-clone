@@ -17,22 +17,32 @@ import {
 } from '@mui/material';
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
+import { categories } from '../data/mockData';
 
 const CategoryPage = () => {
-  const { category } = useParams();
+  const { category, subcategory } = useParams();
   const { products, filters, setFilters, sortBy, setSortBy } = useProducts();
   const { addToCart } = useCart();
 
   const categoryName = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'All';
+  const subcategoryName = subcategory 
+    ? subcategory.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+    : null;
 
   useEffect(() => {
     if (category && category !== 'all') {
-      setFilters({ ...filters, category: categoryName });
+      const newFilters = { ...filters, category: categoryName };
+      if (subcategoryName) {
+        newFilters.subcategory = subcategoryName;
+      } else {
+        newFilters.subcategory = 'All';
+      }
+      setFilters(newFilters);
     } else {
-      setFilters({ ...filters, category: 'All' });
+      setFilters({ ...filters, category: 'All', subcategory: 'All' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category]);
+  }, [category, subcategory]);
 
   const handleQuickAdd = (product, e) => {
     e.preventDefault();
@@ -42,11 +52,44 @@ const CategoryPage = () => {
     addToCart(product, defaultSize, defaultColor, 1);
   };
 
+  const currentCategory = categories.find(c => c.name === categoryName);
+  const displayTitle = subcategoryName 
+    ? `${categoryName} - ${subcategoryName}` 
+    : categoryName;
+
   return (
     <Container sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-        {categoryName} Products
+      <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+        {displayTitle} Products
       </Typography>
+      
+      {/* Subcategory Navigation */}
+      {currentCategory && currentCategory.subcategories && currentCategory.subcategories.length > 0 && (
+        <Box sx={{ mb: 3, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Button
+            component={Link}
+            to={`/category/${category.toLowerCase()}`}
+            variant={!subcategoryName ? 'contained' : 'outlined'}
+            size="small"
+          >
+            All
+          </Button>
+          {currentCategory.subcategories.map((subcat) => {
+            const subcatSlug = subcat.toLowerCase().replace(/\s+/g, '-');
+            return (
+              <Button
+                key={subcat}
+                component={Link}
+                to={`/category/${category.toLowerCase()}/${subcatSlug}`}
+                variant={subcategoryName === subcat ? 'contained' : 'outlined'}
+                size="small"
+              >
+                {subcat}
+              </Button>
+            );
+          })}
+        </Box>
+      )}
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
         <FormControl size="small" sx={{ minWidth: 150 }}>

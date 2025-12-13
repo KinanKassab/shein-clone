@@ -16,6 +16,7 @@ export const ProductProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
     category: 'All',
+    subcategory: 'All',
     minPrice: 0,
     maxPrice: 1000,
     sizes: [],
@@ -40,6 +41,13 @@ export const ProductProvider = ({ children }) => {
     // Filter by category
     if (filters.category !== 'All') {
       filtered = filtered.filter((product) => product.category === filters.category);
+    }
+
+    // Filter by subcategory
+    if (filters.subcategory !== 'All' && filters.subcategory) {
+      filtered = filtered.filter((product) => 
+        product.subcategory && product.subcategory === filters.subcategory
+      );
     }
 
     // Filter by price range

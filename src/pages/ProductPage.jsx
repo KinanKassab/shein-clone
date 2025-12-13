@@ -286,15 +286,6 @@ const ProductPage = () => {
           >
             Add to Cart
           </Button>
-
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button variant="outlined" fullWidth>
-              Buy Now
-            </Button>
-            <Button variant="outlined" fullWidth>
-              ❤️ Wishlist
-            </Button>
-          </Box>
         </Grid>
       </Grid>
 

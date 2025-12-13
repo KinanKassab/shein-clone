@@ -1,11 +1,47 @@
 // Mock product data
 export const categories = [
-  { id: 1, name: 'Women', icon: '👗' },
-  { id: 2, name: 'Men', icon: '👔' },
-  { id: 3, name: 'Kids', icon: '👶' },
-  { id: 4, name: 'Sale', icon: '🏷️' },
-  { id: 5, name: 'Home', icon: '🏠' },
-  { id: 6, name: 'Beauty', icon: '💄' },
+  {
+    id: 1,
+    name: 'Men',
+    icon: '👔',
+    subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
+  },
+  {
+    id: 2,
+    name: 'Women',
+    icon: '👗',
+    subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags', 'Makeup', 'Skirts', 'Dresses'],
+  },
+  {
+    id: 3,
+    name: 'Children',
+    icon: '👶',
+    subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
+  },
+  {
+    id: 4,
+    name: 'Baby',
+    icon: '👶',
+    subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
+  },
+  {
+    id: 5,
+    name: 'Electronics',
+    icon: '📱',
+    subcategories: ['Mobile Phones', 'Laptops', 'Phone Cases', 'Cables'],
+  },
+  {
+    id: 6,
+    name: 'Cars',
+    icon: '🚗',
+    subcategories: [],
+  },
+  {
+    id: 7,
+    name: 'Home',
+    icon: '🏠',
+    subcategories: [],
+  },
 ];
 
 export const products = [
@@ -13,6 +49,7 @@ export const products = [
     id: 1,
     name: 'Floral Print Summer Dress',
     category: 'Women',
+    subcategory: 'Dresses',
     price: 24.99,
     originalPrice: 39.99,
     images: [
@@ -32,6 +69,7 @@ export const products = [
     id: 2,
     name: 'Classic White T-Shirt',
     category: 'Men',
+    subcategory: 'Shirts',
     price: 12.99,
     originalPrice: 19.99,
     images: [
@@ -50,6 +88,7 @@ export const products = [
     id: 3,
     name: 'High-Waist Denim Jeans',
     category: 'Women',
+    subcategory: 'Pants',
     price: 29.99,
     originalPrice: 49.99,
     images: [
@@ -68,6 +107,7 @@ export const products = [
     id: 4,
     name: 'Cotton Polo Shirt',
     category: 'Men',
+    subcategory: 'Shirts',
     price: 18.99,
     originalPrice: 29.99,
     images: [
@@ -85,7 +125,8 @@ export const products = [
   {
     id: 5,
     name: 'Kids Cartoon T-Shirt',
-    category: 'Kids',
+    category: 'Children',
+    subcategory: 'Shirts',
     price: 9.99,
     originalPrice: 15.99,
     images: [
@@ -104,6 +145,7 @@ export const products = [
     id: 6,
     name: 'Striped Long Sleeve Shirt',
     category: 'Women',
+    subcategory: 'Shirts',
     price: 19.99,
     originalPrice: 34.99,
     images: [
@@ -122,6 +164,7 @@ export const products = [
     id: 7,
     name: 'Casual Shorts',
     category: 'Men',
+    subcategory: 'Pants',
     price: 15.99,
     originalPrice: 24.99,
     images: [
@@ -140,6 +183,7 @@ export const products = [
     id: 8,
     name: 'Pleated Midi Skirt',
     category: 'Women',
+    subcategory: 'Skirts',
     price: 22.99,
     originalPrice: 39.99,
     images: [
@@ -158,6 +202,7 @@ export const products = [
     id: 9,
     name: 'Hooded Sweatshirt',
     category: 'Men',
+    subcategory: 'Sweaters',
     price: 27.99,
     originalPrice: 44.99,
     images: [
@@ -176,6 +221,7 @@ export const products = [
     id: 10,
     name: 'Summer Maxi Dress',
     category: 'Women',
+    subcategory: 'Dresses',
     price: 26.99,
     originalPrice: 45.99,
     images: [
@@ -194,6 +240,7 @@ export const products = [
     id: 11,
     name: 'Cotton Button-Down Shirt',
     category: 'Men',
+    subcategory: 'Shirts',
     price: 21.99,
     originalPrice: 35.99,
     images: [
@@ -211,7 +258,8 @@ export const products = [
   {
     id: 12,
     name: 'Kids Denim Jacket',
-    category: 'Kids',
+    category: 'Children',
+    subcategory: 'Jackets',
     price: 19.99,
     originalPrice: 32.99,
     images: [

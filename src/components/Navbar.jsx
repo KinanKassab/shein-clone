@@ -70,10 +70,13 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { text: 'Women', to: '/category/women' },
     { text: 'Men', to: '/category/men' },
-    { text: 'Kids', to: '/category/kids' },
-    { text: 'Sale', to: '/category/sale' },
+    { text: 'Women', to: '/category/women' },
+    { text: 'Children', to: '/category/children' },
+    { text: 'Baby', to: '/category/baby' },
+    { text: 'Electronics', to: '/category/electronics' },
+    { text: 'Cars', to: '/category/cars' },
+    { text: 'Home', to: '/category/home' },
   ];
 
   return (

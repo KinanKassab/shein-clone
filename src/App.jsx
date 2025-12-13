@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Homepage from './pages/Homepage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
@@ -10,33 +11,35 @@ import CategoryPage from './pages/CategoryPage';
 import { CartProvider } from './contexts/CartContext';
 import { ProductProvider } from './contexts/ProductContext';
 
+// Advanced "Soft UI" Theme with Neumorphism-lite aesthetic
+// Neutral palette: creams, charcoal, slate with high-contrast accent
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#541d22',
-      light: '#7a3a3f',
-      dark: '#3a1418',
+      main: '#1a1a1a', // Charcoal accent for high contrast
+      light: '#4a4a4a',
+      dark: '#0a0a0a',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#2b0000',
-      light: '#4d1a1a',
-      dark: '#1a0000',
+      main: '#6b7280', // Slate
+      light: '#9ca3af',
+      dark: '#4b5563',
       contrastText: '#ffffff',
     },
     background: {
-      default: '#f5eded',
-      paper: '#FFFFFF',
+      default: '#faf9f7', // Cream background
+      paper: '#ffffff',
     },
     text: {
-      primary: '#2b0000',
-      secondary: '#541d22',
+      primary: '#1a1a1a', // Charcoal
+      secondary: '#6b7280', // Slate
     },
     error: {
-      main: '#d32f2f',
+      main: '#dc2626',
     },
     success: {
-      main: '#2e7d32',
+      main: '#16a34a',
     },
   },
   typography: {
@@ -79,26 +82,39 @@ const theme = createTheme({
     ...Array(19).fill('0px 16px 32px rgba(0,0,0,0.14)'),
   ],
   components: {
+    // Pill-shaped buttons with no elevation, soft hover states
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 50, // Pill shape
           padding: '10px 24px',
           fontSize: '0.95rem',
+          boxShadow: 'none', // No elevation
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         },
         contained: {
-          boxShadow: '0px 4px 12px rgba(84, 29, 34, 0.3)',
           '&:hover': {
-            boxShadow: '0px 6px 16px rgba(84, 29, 34, 0.4)',
+            boxShadow: 'none',
+            transform: 'translateY(-2px)',
+            backgroundColor: 'primary.dark',
+          },
+        },
+        outlined: {
+          borderWidth: '1.5px',
+          '&:hover': {
+            borderWidth: '1.5px',
+            transform: 'translateY(-2px)',
           },
         },
       },
     },
+    // Cards with subtle border, no shadow
     MuiCard: {
       styleOverrides: {
         root: {
           borderRadius: 16,
-          boxShadow: '0px 2px 8px rgba(0,0,0,0.08)',
+          boxShadow: 'none', // Remove default shadows
+          border: '1px solid rgba(0, 0, 0, 0.08)', // Subtle border
         },
       },
     },
@@ -112,16 +128,30 @@ function App() {
       <Router>
         <ProductProvider>
           <CartProvider>
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/category/:category" element={<CategoryPage />} />
-              <Route path="/search" element={<Homepage />} />
-            </Routes>
+            {/* Sticky Footer Layout: Flex container with minHeight 100vh */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '100vh',
+              }}
+            >
+              <Navbar />
+              {/* Main content area with flexGrow to push footer down */}
+              <Box sx={{ flexGrow: 1 }}>
+                <Routes>
+                  <Route path="/" element={<Homepage />} />
+                  <Route path="/product/:id" element={<ProductPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/checkout" element={<CheckoutPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/category/:category/:subcategory" element={<CategoryPage />} />
+                  <Route path="/category/:category" element={<CategoryPage />} />
+                  <Route path="/search" element={<Homepage />} />
+                </Routes>
+              </Box>
+              <Footer />
+            </Box>
           </CartProvider>
         </ProductProvider>
       </Router>
