@@ -131,14 +131,14 @@ const CategoryPage = () => {
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
-                        ${product.price}
+                        {product.price} SYP
                       </Typography>
                       {product.originalPrice && (
                         <Typography
                           variant="body2"
                           sx={{ textDecoration: 'line-through', color: 'grey.500' }}
                         >
-                          ${product.originalPrice}
+                          {product.originalPrice} SYP
                         </Typography>
                       )}
                     </Box>

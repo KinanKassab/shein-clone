@@ -247,7 +247,7 @@ const CheckoutPage = () => {
                       {item.selectedSize} | {item.selectedColor} × {item.quantity}
                     </Typography>
                     <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {(item.price * item.quantity).toFixed(2)} SYP
                     </Typography>
                   </Box>
                 </Box>
@@ -259,17 +259,17 @@ const CheckoutPage = () => {
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="body2">Subtotal</Typography>
-                <Typography variant="body2">${cartTotal.toFixed(2)}</Typography>
+                <Typography variant="body2">{cartTotal.toFixed(2)} SYP</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="body2">Shipping</Typography>
                 <Typography variant="body2">
-                  {shippingCost === 0 ? 'FREE' : `$${shippingCost.toFixed(2)}`}
+                  {shippingCost === 0 ? 'FREE' : `${shippingCost.toFixed(2)} SYP`}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="body2">Tax</Typography>
-                <Typography variant="body2">${tax.toFixed(2)}</Typography>
+                <Typography variant="body2">{tax.toFixed(2)} SYP</Typography>
               </Box>
             </Box>
 
@@ -280,7 +280,7 @@ const CheckoutPage = () => {
                 Total
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                ${grandTotal.toFixed(2)}
+                {grandTotal.toFixed(2)} SYP
               </Typography>
             </Box>
 

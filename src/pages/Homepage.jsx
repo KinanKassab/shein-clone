@@ -601,7 +601,7 @@ const Homepage = () => {
                                 fontSize: '1.1rem',
                               }}
                             >
-                              ${product.price}
+                              {product.price} SYP
                             </Typography>
                             {product.originalPrice && (
                               <Typography
@@ -612,7 +612,7 @@ const Homepage = () => {
                                   fontSize: '0.85rem',
                                 }}
                               >
-                                ${product.originalPrice}
+                                {product.originalPrice} SYP
                               </Typography>
                             )}
                           </Box>
@@ -941,7 +941,7 @@ const Homepage = () => {
                             fontSize: '1.1rem',
                           }}
                         >
-                          ${product.price}
+                          {product.price} SYP
                         </Typography>
                         {product.originalPrice && (
                           <Typography
@@ -952,7 +952,7 @@ const Homepage = () => {
                               fontSize: '0.85rem',
                             }}
                           >
-                            ${product.originalPrice}
+                            {product.originalPrice} SYP
                           </Typography>
                         )}
                       </Box>

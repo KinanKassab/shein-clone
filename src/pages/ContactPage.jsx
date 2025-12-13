@@ -187,7 +187,7 @@ const ContactPage = () => {
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 We offer a 30-day return policy for unused items with tags attached. Returns are free
-                for orders over $50.
+                for orders over 50 SYP.
               </Typography>
             </Paper>
           </Grid>

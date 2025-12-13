@@ -66,7 +66,7 @@ const CartPage = () => {
                     Size: {item.selectedSize} | Color: {item.selectedColor}
                   </Typography>
                   <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold', mb: 2 }}>
-                    ${item.price}
+                    {item.price} SYP
                   </Typography>
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -93,7 +93,7 @@ const CartPage = () => {
                     </Box>
 
                     <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {(item.price * item.quantity).toFixed(2)} SYP
                     </Typography>
 
                     <IconButton
@@ -126,7 +126,7 @@ const CartPage = () => {
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="body2">Subtotal</Typography>
-                <Typography variant="body2">${cartTotal.toFixed(2)}</Typography>
+                <Typography variant="body2">{cartTotal.toFixed(2)} SYP</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="body2">Shipping</Typography>
@@ -136,17 +136,17 @@ const CartPage = () => {
                       FREE
                     </Typography>
                   ) : (
-                    `$${shippingCost.toFixed(2)}`
+                    `${shippingCost.toFixed(2)} SYP`
                   )}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="body2">Tax</Typography>
-                <Typography variant="body2">${tax.toFixed(2)}</Typography>
+                <Typography variant="body2">{tax.toFixed(2)} SYP</Typography>
               </Box>
               {cartTotal < 50 && (
                 <Typography variant="caption" color="text.secondary">
-                  Add ${(50 - cartTotal).toFixed(2)} more for free shipping!
+                  Add {(50 - cartTotal).toFixed(2)} SYP more for free shipping!
                 </Typography>
               )}
             </Box>
@@ -158,7 +158,7 @@ const CartPage = () => {
                 Total
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                ${grandTotal.toFixed(2)}
+                {grandTotal.toFixed(2)} SYP
               </Typography>
             </Box>
 

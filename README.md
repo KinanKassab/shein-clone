@@ -87,7 +87,7 @@ K-Store/
 - Items persist in localStorage
 - Update quantities directly from the cart
 - Remove items easily
-- Free shipping on orders over $50
+- Free shipping on orders over 50 SYP
 
 ## Mock Data
 

@@ -188,14 +188,14 @@ const ProductPage = () => {
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
             <Typography variant="h4" color="primary" sx={{ fontWeight: 'bold' }}>
-              ${product.price}
+              {product.price} SYP
             </Typography>
             {product.originalPrice && (
               <Typography
                 variant="h6"
                 sx={{ textDecoration: 'line-through', color: 'grey.500' }}
               >
-                ${product.originalPrice}
+                {product.originalPrice} SYP
               </Typography>
             )}
             {product.originalPrice && (
