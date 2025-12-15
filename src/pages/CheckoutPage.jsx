@@ -9,8 +9,12 @@ import {
   Grid,
   Paper,
   Divider,
+  Alert,
+  CircularProgress,
+  Snackbar,
 } from '@mui/material';
 import { useCart } from '../contexts/CartContext';
+import axios from 'axios';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -18,8 +22,11 @@ const CheckoutPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
-    place: '',
+    address: '',
+    notes: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const shippingCost = cartTotal > 50 ? 0 : 5.99;
   const tax = cartTotal * 0.08;
@@ -49,43 +56,109 @@ const CheckoutPage = () => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     // Validate form
-    if (!formData.fullName.trim() || !formData.phone.trim() || !formData.place.trim()) {
-      alert('Please fill in all required fields');
+    if (!formData.fullName.trim() || !formData.phone.trim() || !formData.address.trim()) {
+      setSnackbar({
+        open: true,
+        message: 'Please fill in all required fields',
+        severity: 'error',
+      });
       return;
     }
 
     // Validate Syrian phone number format
     if (!/^09\d{8}$/.test(formData.phone)) {
-      alert('Please enter a valid Syrian phone number (09XXXXXXXX)');
+      setSnackbar({
+        open: true,
+        message: 'Please enter a valid Syrian phone number (09XXXXXXXX)',
+        severity: 'error',
+      });
       return;
     }
 
-    // Mock order placement
-    const orderData = {
-      items: cartItems,
-      customer: {
-        fullName: formData.fullName,
-        phone: formData.phone,
-        place: formData.place,
-      },
-      total: grandTotal,
-      orderNumber: `ORD-${Date.now()}`,
-      date: new Date().toISOString(),
-    };
+    setIsSubmitting(true);
 
-    // Save order to localStorage
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    orders.push(orderData);
-    localStorage.setItem('orders', JSON.stringify(orders));
+    try {
+      // Build order payload with product links
+      const orderItems = cartItems.map((item) => {
+        // Generate product link (assuming the site URL structure)
+        const productLink = `${window.location.origin}/product/${item.id}`;
+        return {
+          name: item.name,
+          link: productLink,
+          quantity: item.quantity,
+          price: item.price,
+          size: item.selectedSize,
+          color: item.selectedColor,
+        };
+      });
 
-    // Clear cart
-    clearCart();
-    
-    // Show success message and navigate home
-    alert(`Order placed successfully! Order Number: ${orderData.orderNumber}`);
-    navigate('/');
+      const orderPayload = {
+        customer: {
+          fullName: formData.fullName.trim(),
+          phone: formData.phone.trim(),
+          address: formData.address.trim(),
+          notes: formData.notes.trim() || null,
+        },
+        items: orderItems,
+        totals: {
+          subtotal: cartTotal,
+          shipping: shippingCost,
+          tax: tax,
+          total: grandTotal,
+        },
+        orderNumber: `ORD-${Date.now()}`,
+        date: new Date().toISOString(),
+      };
+
+      // Send order to backend API
+      const response = await axios.post('/api/submit-order', orderPayload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.data.success) {
+        // Save order to localStorage for history
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        orders.push({
+          ...orderPayload,
+          telegramSent: true,
+        });
+        localStorage.setItem('orders', JSON.stringify(orders));
+
+        // Clear cart
+        clearCart();
+
+        // Show success message
+        setSnackbar({
+          open: true,
+          message: `Order placed successfully! Order Number: ${orderPayload.orderNumber}`,
+          severity: 'success',
+        });
+
+        // Navigate home after a short delay
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
+      } else {
+        throw new Error(response.data.error || 'Failed to submit order');
+      }
+    } catch (error) {
+      console.error('Order submission error:', error);
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || error.message || 'Failed to submit order. Please try again.',
+        severity: 'error',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   if (cartItems.length === 0) {
@@ -186,13 +259,36 @@ const CheckoutPage = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Place / Address"
+                  label="Address"
                   required
                   multiline
                   rows={3}
-                  value={formData.place}
-                  onChange={handleChange('place')}
+                  value={formData.address}
+                  onChange={handleChange('address')}
                   placeholder="Enter your full address or location"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                      },
+                      '&.Mui-focused': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      },
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Notes (Optional)"
+                  multiline
+                  rows={3}
+                  value={formData.notes}
+                  onChange={handleChange('notes')}
+                  placeholder="Any special instructions or notes for your order"
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       transition: 'all 0.3s ease',
@@ -289,6 +385,7 @@ const CheckoutPage = () => {
               fullWidth 
               size="large" 
               onClick={handlePlaceOrder}
+              disabled={isSubmitting}
               sx={{
                 background: 'linear-gradient(45deg, #000 30%, #ff6b6b 90%)',
                 fontWeight: 'bold',
@@ -300,13 +397,39 @@ const CheckoutPage = () => {
                   boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
                   background: 'linear-gradient(45deg, #ff6b6b 30%, #000 90%)',
                 },
+                '&:disabled': {
+                  background: '#ccc',
+                },
               }}
             >
-              Place Order
+              {isSubmitting ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CircularProgress size={20} sx={{ color: 'white' }} />
+                  <span>Submitting...</span>
+                </Box>
+              ) : (
+                'Confirm Order'
+              )}
             </Button>
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Success/Error Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
