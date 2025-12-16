@@ -17,13 +17,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    // // Validate environment variables
-    // const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    // const chatId = process.env.TELEGRAM_CHAT_ID;
+    // Validate environment variables
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
 
-    // Validate environment values
-    const botToken = '8567149291:AAHNfp-B0nfbscCAO8DZkYtD8C5w1oJZTWk'
-    const chatId = '-1003475137139'
+    // // Validate environment values
+    // const botToken = '8567149291:AAHNfp-B0nfbscCAO8DZkYtD8C5w1oJZTWk'
+    // const chatId = '-1003475137139'
 
     // Validate Telegram configuration
     if (!botToken || !chatId) {
@@ -174,6 +174,8 @@ function escapeMarkdown(text) {
     .replace(/\./g, '\\.')
     .replace(/\!/g, '\\!');
 }
+
+
 
 
 

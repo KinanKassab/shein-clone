@@ -73,7 +73,7 @@ const ContactPage = () => {
                   <Typography variant="subtitle2" color="text.secondary">
                     Phone
                   </Typography>
-                  <Typography variant="body1">+1 (555) 123-4567</Typography>
+                  <Typography variant="body1">+963 982 175 721</Typography>
                 </Box>
               </Box>
 
@@ -84,12 +84,11 @@ const ContactPage = () => {
                     Address
                   </Typography>
                   <Typography variant="body1">
-                    123 Fashion Street
+                    Rif Dimashq – Jaramana
                     <br />
-                    New York, NY 10001
-                    <br />
-                    United States
+                    Main Street – Opposite Al Ameer Mobile Shop
                   </Typography>
+
                 </Box>
               </Box>
             </Box>
@@ -99,12 +98,12 @@ const ContactPage = () => {
                 Business Hours
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                Monday - Friday: 9:00 AM - 6:00 PM
+                Sunday - Thursday: 9:00 AM - 6:00 PM
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
                 Saturday: 10:00 AM - 4:00 PM
               </Typography>
-              <Typography variant="body2">Sunday: Closed</Typography>
+              <Typography variant="body2">Friday: Closed</Typography>
             </Box>
           </Paper>
         </Grid>
@@ -186,8 +185,7 @@ const ContactPage = () => {
                 What is your return policy?
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                We offer a 30-day return policy for unused items with tags attached. Returns are free
-                for orders over 50 SYP.
+              Please note that we do not accept returns or exchanges on unused items. All orders are final once payment is completed.
               </Typography>
             </Paper>
           </Grid>
@@ -197,18 +195,18 @@ const ContactPage = () => {
                 How long does shipping take?
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Standard shipping takes 5-7 business days. Express shipping (2-3 days) is available
-                for an additional fee.
+                Standard shipping takes 12 to 15 business days. Express shipping (2 to 3 days) is available
+                for an additional fee, and this feature is not available for all products.
               </Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
-                Do you ship internationally?
+                Do you ship to all parts of Syria?
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Yes, we ship to over 50 countries worldwide. International shipping rates and delivery
+                Yes, we ship to over 10 countries worldwide. International shipping rates and delivery
                 times vary by location.
               </Typography>
             </Paper>
@@ -219,8 +217,8 @@ const ContactPage = () => {
                 How can I track my order?
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Once your order ships, you'll receive a tracking number via email. You can track your
-                order status in your account dashboard.
+                Once your order ships, you'll receive a message via your phone number. You can track your
+                order status by contacting us via email or phone number.
               </Typography>
             </Paper>
           </Grid>

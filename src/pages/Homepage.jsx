@@ -22,13 +22,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Popover,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
 } from '@mui/material';
-import { ExpandMore, FilterList } from '@mui/icons-material';
+import { ExpandMore, FilterList, ArrowForwardIos } from '@mui/icons-material';
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
 import { banners, categories } from '../data/mockData';
@@ -39,8 +34,6 @@ const Homepage = () => {
   const { addToCart } = useCart();
   const [displayedProducts, setDisplayedProducts] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
-  const [categoryAnchor, setCategoryAnchor] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const observerRef = useRef(null);
 
@@ -120,21 +113,9 @@ const Homepage = () => {
     }));
   };
 
-  const handleCategoryHover = (event, category) => {
-    if (category.subcategories && category.subcategories.length > 0) {
-      setCategoryAnchor(event.currentTarget);
-      setSelectedCategory(category);
-    }
-  };
-
-  const handleCategoryLeave = () => {
-    setCategoryAnchor(null);
-    setSelectedCategory(null);
-  };
-
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
-      <Container>
+      <Container maxWidth="xl">
         {/* Modern Bento-Grid Hero Section */}
         {/* Asymmetrical grid: Left 66% (Desktop), Right 33% (Desktop) */}
         {!searchQuery && (
@@ -220,7 +201,17 @@ const Homepage = () => {
               </Grid>
 
               {/* Right: Vertical Stack of Two Feature Cards (33% on desktop, full width on mobile) */}
-              <Grid item xs={12} md={4}>
+              <Grid 
+                item 
+                xs={12} 
+                md={4}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
                 <Grid container spacing={2} sx={{ height: '100%' }}>
                   {/* New Arrivals Card */}
                   <Grid item xs={12} sx={{ flex: 1 }}>
@@ -318,140 +309,187 @@ const Homepage = () => {
         )}
 
         {/* Categories */}
-        <Box sx={{ mb: 4, animation: 'fadeIn 0.6s ease-out' }}>
-          <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-            Shop by Category
-          </Typography>
+        <Box sx={{ mb: 6, animation: 'fadeIn 0.6s ease-out' }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', mb: 2 }}>
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                Shop by Category
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Curated collections for every style and occasion.
+              </Typography>
+            </Box>
+            <Button
+              component={Link}
+              to="/category/all"
+              size="small"
+              variant="outlined"
+              sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+            >
+              View all
+            </Button>
+          </Box>
+
           <Box
             sx={{
-              display: 'flex',
-              gap: 2,
-              overflowX: 'auto',
-              pb: 2,
-              scrollBehavior: 'smooth',
-              '&::-webkit-scrollbar': { height: 8 },
-              '&::-webkit-scrollbar-thumb': { 
-                bgcolor: 'grey.300', 
-                borderRadius: 1,
-                '&:hover': {
-                  bgcolor: 'grey.400',
-                },
+              p: { xs: 2, md: 3 },
+              borderRadius: 3,
+              border: '1px solid',
+              borderColor: 'grey.200',
+              background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 50%, #eef2f7 100%)',
+              boxShadow: '0 16px 40px rgba(0,0,0,0.06)',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                right: -120,
+                top: -120,
+                width: 260,
+                height: 260,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle at center, rgba(99, 102, 241, 0.12), transparent 60%)',
+                pointerEvents: 'none',
               },
             }}
           >
-            {categories.map((category, index) => (
-              <Box
-                key={category.id}
-                onMouseEnter={(e) => handleCategoryHover(e, category)}
-                onMouseLeave={handleCategoryLeave}
-                sx={{
-                  minWidth: 120,
-                  textAlign: 'center',
-                  position: 'relative',
-                  animation: `scaleIn 0.5s ease-out ${index * 0.1}s both`,
-                }}
-              >
-                <Box
-                  component={Link}
-                  to={`/category/${category.name.toLowerCase()}`}
-                  sx={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    display: 'block',
-                    '&:hover': { 
-                      transform: 'translateY(-8px) scale(1.05)',
-                      '& .category-icon': {
-                        transform: 'scale(1.1) rotate(5deg)',
-                        boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
-                      },
-                    },
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }}
-                >
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: { xs: 'nowrap', md: 'wrap' },
+                gap: 2,
+                overflowX: 'auto',
+                pb: 1,
+                scrollBehavior: 'smooth',
+                '&::-webkit-scrollbar': { height: 8 },
+                '&::-webkit-scrollbar-thumb': {
+                  bgcolor: 'grey.300',
+                  borderRadius: 1,
+                  '&:hover': { bgcolor: 'grey.400' },
+                },
+              }}
+            >
+              {categories.map((category, index) => {
+                const previewSubcategories = category.subcategories?.slice(0, 3).join(' • ');
+
+                return (
                   <Box
-                    className="category-icon"
+                    key={category.id}
                     sx={{
-                      width: 100,
-                      height: 100,
-                      borderRadius: '50%',
-                      bgcolor: 'grey.100',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 40,
-                      mb: 1,
-                      mx: 'auto',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                    }}
-                  >
-                    {category.icon}
-                  </Box>
-                  <Typography 
-                    variant="body2"
-                    sx={{
-                      fontWeight: 500,
-                      transition: 'color 0.3s ease',
-                      '&:hover': {
-                        color: 'primary.main',
+                      minWidth: { xs: 220, sm: 200 },
+                      flex: { 
+                        xs: '0 0 auto', 
+                        md: '1 0 calc(25% - 16px)',
+                        lg: '1 0 calc(20% - 16px)',
+                        xl: '1 0 calc(16.666% - 16px)'
                       },
+                      position: 'relative',
+                      animation: `scaleIn 0.5s ease-out ${index * 0.08}s both`,
                     }}
                   >
-                    {category.name}
-                  </Typography>
-                </Box>
-              </Box>
-            ))}
+                    <Box
+                      component={Link}
+                      to={`/category/${category.name.toLowerCase()}`}
+                      sx={{
+                        display: 'block',
+                        height: '100%',
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        borderRadius: 3,
+                        p: 2.5,
+                        border: '1px solid',
+                        borderColor: 'grey.100',
+                        background: 'linear-gradient(160deg, #ffffff, #f8fafc)',
+                        boxShadow: '0 12px 30px rgba(0,0,0,0.06)',
+                        transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(120deg, rgba(99,102,241,0.08), transparent 45%)',
+                          opacity: 0,
+                          transition: 'opacity 0.3s ease',
+                        },
+                        '&:hover': {
+                          transform: 'translateY(-6px)',
+                          borderColor: 'primary.light',
+                          boxShadow: '0 18px 45px rgba(15,23,42,0.12)',
+                          '&::before': { opacity: 1 },
+                          '& .category-icon': {
+                            transform: 'scale(1.08) rotate(4deg)',
+                            boxShadow: '0 12px 25px rgba(99,102,241,0.25)',
+                          },
+                        },
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                        <Box
+                          className="category-icon"
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: 26,
+                            background: 'linear-gradient(145deg, #eef2ff, #e0e7ff)',
+                            color: '#1e1b4b',
+                            boxShadow: '0 6px 14px rgba(79,70,229,0.18)',
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          {category.icon}
+                        </Box>
+                        <Box>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                            {category.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {category.subcategories?.length ? `${category.subcategories.length} subcategories` : 'Explore products'}
+                          </Typography>
+                        </Box>
+                      </Box>
+
+                      {previewSubcategories && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          {previewSubcategories}
+                        </Typography>
+                      )}
+
+                      <Box
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          mt: 1,
+                          px: 1.5,
+                          py: 0.75,
+                          borderRadius: 999,
+                          background: 'linear-gradient(120deg, #6366f1, #22d3ee)',
+                          color: 'white',
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          boxShadow: '0 12px 24px rgba(99, 102, 241, 0.25)',
+                          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                          '&:hover': {
+                            transform: 'translateY(-2px) scale(1.02)',
+                            boxShadow: '0 16px 32px rgba(99, 102, 241, 0.28)',
+                          },
+                        }}
+                      >
+                        <Box component="span">Shop now</Box>
+                        <ArrowForwardIos sx={{ fontSize: 14, opacity: 0.9 }} />
+                      </Box>
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
           </Box>
         </Box>
-
-        {/* Subcategories Popover */}
-        <Popover
-          open={Boolean(categoryAnchor)}
-          anchorEl={categoryAnchor}
-          onClose={handleCategoryLeave}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          disableRestoreFocus
-          sx={{
-            pointerEvents: 'none',
-            '& .MuiPopover-paper': {
-              pointerEvents: 'auto',
-              mt: 1,
-              minWidth: 200,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-            },
-          }}
-          onMouseLeave={handleCategoryLeave}
-        >
-          {selectedCategory && selectedCategory.subcategories && selectedCategory.subcategories.length > 0 && (
-            <List sx={{ py: 1 }}>
-              {selectedCategory.subcategories.map((subcategory) => (
-                <ListItem key={subcategory} disablePadding>
-                  <ListItemButton
-                    component={Link}
-                    to={`/category/${selectedCategory.name.toLowerCase()}/${subcategory.toLowerCase().replace(/\s+/g, '-')}`}
-                    onClick={handleCategoryLeave}
-                    sx={{
-                      '&:hover': {
-                        bgcolor: 'primary.light',
-                        color: 'white',
-                      },
-                    }}
-                  >
-                    <ListItemText primary={subcategory} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          )}
-        </Popover>
 
         {/* Featured Products - Only show if not searching */}
         {!searchQuery && (
@@ -476,7 +514,9 @@ const Homepage = () => {
                     item 
                     xs={6} 
                     sm={4} 
-                    md={3} 
+                    md={3}
+                    lg={3}
+                    xl={3}
                     key={product.id}
                     sx={{
                       animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`,
@@ -818,10 +858,17 @@ const Homepage = () => {
                 item 
                 xs={6} 
                 sm={4} 
-                md={3} 
+                md={3}
+                lg={2}
+                xl={2}
                 key={product.id}
                 sx={{
                   animation: `fadeIn 0.6s ease-out ${(index % 12) * 0.05}s both`,
+                  // Custom width for large screens (lg) to show 5 columns instead of 6
+                  '@media (min-width: 1200px) and (max-width: 1535px)': {
+                    flexBasis: 'calc(20% - 19.2px) !important',
+                    maxWidth: 'calc(20% - 19.2px) !important',
+                  },
                 }}
               >
                 {/* Glassmorphism Product Card */}
