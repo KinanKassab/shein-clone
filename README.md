@@ -37,7 +37,7 @@ A modern, feature-rich e-commerce website clone inspired by Shein, built with Re
 ## Project Structure
 
 ```
-K-Store/
+LookyStore/
 ├── src/
 │   ├── components/       # Reusable components
 │   │   └── Navbar.jsx
