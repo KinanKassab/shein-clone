@@ -53,7 +53,7 @@ const Footer = () => {
                 letterSpacing: '-0.02em',
               }}
             >
-              K-Store
+              looky
             </Typography>
             <Typography
               variant="body2"
@@ -337,7 +337,7 @@ const Footer = () => {
           }}
         >
           <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} K-Store. All rights reserved.
+            © {new Date().getFullYear()} looky. All rights reserved.
           </Typography>
           <Box sx={{ display: 'flex', gap: 3 }}>
             <Typography

@@ -122,7 +122,7 @@ const Navbar = () => {
                 },
               }}
             >
-              K-Store
+              looky
             </Typography>
           </Link>
 
