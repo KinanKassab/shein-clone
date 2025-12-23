@@ -11,9 +11,9 @@ body {
   font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5eded;
+  background-color: #F4F6F6;
   overflow-x: hidden;
-  color: #2b0000;
+  color: #022B30;
   /* PWA App-like styles */
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -241,7 +241,7 @@ a {
 
 /* App-like touch feedback */
 .touch-feedback {
-  -webkit-tap-highlight-color: rgba(99, 102, 241, 0.1);
+  -webkit-tap-highlight-color: rgba(0, 79, 89, 0.1);
   transition: transform 0.1s ease, opacity 0.1s ease;
 }
 

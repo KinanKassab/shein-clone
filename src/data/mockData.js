@@ -2,6 +2,7 @@
 // Note: Category icons should be PNG files placed in public/icons/categories/ folder
 // Or update these paths to point to your icon image URLs
 export const categories = [
+  // Men Category
   {
     id: 1,
     name: 'Men',
@@ -9,6 +10,7 @@ export const categories = [
     fallbackIcon: '👔',
     subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
   },
+  // Women Category
   {
     id: 2,
     name: 'Women',
@@ -16,6 +18,7 @@ export const categories = [
     fallbackIcon: '👗',
     subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags', 'Makeup', 'Skirts', 'Dresses'],
   },
+  // Children Category
   {
     id: 3,
     name: 'Children',
@@ -23,6 +26,7 @@ export const categories = [
     fallbackIcon: '👶',
     subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
   },
+  // Baby Category
   {
     id: 4,
     name: 'Baby',
@@ -30,6 +34,7 @@ export const categories = [
     fallbackIcon: '👶',
     subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
   },
+  // Electronics Category
   {
     id: 5,
     name: 'Electronics',
@@ -37,6 +42,7 @@ export const categories = [
     fallbackIcon: '📱',
     subcategories: ['Mobile Phones', 'Laptops', 'Phone Cases', 'Cables'],
   },
+  // Cars Category
   {
     id: 6,
     name: 'Cars',
@@ -44,6 +50,7 @@ export const categories = [
     fallbackIcon: '🚗',
     subcategories: [],
   },
+  // Home Category
   {
     id: 7,
     name: 'Home',

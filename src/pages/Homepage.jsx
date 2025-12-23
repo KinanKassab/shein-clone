@@ -27,6 +27,7 @@ import { ExpandMore, FilterList, ArrowForwardIos } from '@mui/icons-material';
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
 import { banners, categories } from '../data/mockData';
+import ProductCard from '../components/ProductCard';
 
 const Homepage = () => {
   const location = useLocation();
@@ -153,7 +154,7 @@ const Homepage = () => {
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      background: 'linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(107, 114, 128, 0.4) 100%)',
+                      background: 'linear-gradient(135deg, rgba(2, 43, 48, 0.6) 0%, rgba(0, 79, 89, 0.4) 100%)',
                     },
                   }}
                 >
@@ -254,7 +255,7 @@ const Homepage = () => {
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          background: 'linear-gradient(to top, rgba(26, 26, 26, 0.7) 0%, transparent 100%)',
+                          background: 'linear-gradient(to top, rgba(2, 43, 48, 0.7) 0%, transparent 100%)',
                         },
                       }}
                     >
@@ -299,7 +300,7 @@ const Homepage = () => {
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          background: 'linear-gradient(to top, rgba(26, 26, 26, 0.7) 0%, transparent 100%)',
+                          background: 'linear-gradient(to top, rgba(2, 43, 48, 0.7) 0%, transparent 100%)',
                         },
                       }}
                     >
@@ -369,7 +370,7 @@ const Homepage = () => {
                 width: { xs: 130, md: 260 },
                 height: { xs: 130, md: 260 },
                 borderRadius: '50%',
-                background: 'radial-gradient(circle at center, rgba(99, 102, 241, 0.12), transparent 60%)',
+                background: 'radial-gradient(circle at center, rgba(0, 79, 89, 0.12), transparent 60%)',
                 pointerEvents: 'none',
               },
             }}
@@ -426,7 +427,7 @@ const Homepage = () => {
                         p: { xs: 2, md: 2.5 },
                         border: '1px solid',
                         borderColor: 'grey.100',
-                        background: 'linear-gradient(160deg, #ffffff, #f8fafc)',
+                        background: 'linear-gradient(160deg, #ffffff, #F4F6F6)',
                         boxShadow: { xs: '0 4px 12px rgba(0,0,0,0.06)', md: '0 12px 30px rgba(0,0,0,0.06)' },
                         transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                         position: 'relative',
@@ -439,7 +440,7 @@ const Homepage = () => {
                           content: '""',
                           position: 'absolute',
                           inset: 0,
-                          background: 'linear-gradient(120deg, rgba(99,102,241,0.08), transparent 45%)',
+                          background: 'linear-gradient(120deg, rgba(0, 79, 89, 0.08), transparent 45%)',
                           opacity: 0,
                           transition: 'opacity 0.3s ease',
                         },
@@ -450,7 +451,7 @@ const Homepage = () => {
                           '&::before': { opacity: 1 },
                           '& .category-icon': {
                             transform: { xs: 'scale(1.02)', md: 'scale(1.08) rotate(4deg)' },
-                            boxShadow: { xs: '0 6px 14px rgba(79,70,229,0.18)', md: '0 12px 25px rgba(99,102,241,0.25)' },
+                            boxShadow: { xs: '0 6px 14px rgba(0, 79, 89, 0.18)', md: '0 12px 25px rgba(0, 79, 89, 0.25)' },
                           },
                         },
                       }}
@@ -516,15 +517,15 @@ const Homepage = () => {
                           px: 1.5,
                           py: 0.75,
                           borderRadius: 999,
-                          background: 'linear-gradient(120deg, #6366f1, #22d3ee)',
+                          background: 'linear-gradient(120deg, #004F59, #7BC0B6)',
                           color: 'white',
                           fontWeight: 700,
                           fontSize: '0.85rem',
-                          boxShadow: '0 12px 24px rgba(99, 102, 241, 0.25)',
+                          boxShadow: '0 12px 24px rgba(0, 79, 89, 0.25)',
                           transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                           '&:hover': {
                             transform: 'translateY(-2px) scale(1.02)',
-                            boxShadow: '0 16px 32px rgba(99, 102, 241, 0.28)',
+                            boxShadow: '0 16px 32px rgba(0, 79, 89, 0.28)',
                           },
                         }}
                       >
@@ -741,176 +742,7 @@ const Homepage = () => {
                   },
                 }}
               >
-                {/* Glassmorphism Product Card */}
-                <Card 
-                  sx={{ 
-                    height: '100%', 
-                    display: 'flex', 
-                    flexDirection: 'column',
-                    overflow: 'hidden',
-                    // Mobile-first: App-like UI with rounded corners and shadows
-                    bgcolor: 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(0, 0, 0, 0.08)',
-                    borderRadius: { xs: 3, sm: 3, md: 2 },
-                    boxShadow: { xs: '0 4px 12px rgba(0,0,0,0.08)', md: 'none' },
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    cursor: 'pointer',
-                    touchAction: 'manipulation', // Better touch handling
-                    '&:active': {
-                      transform: { xs: 'scale(0.98)', md: 'none' },
-                    },
-                    '&:hover': {
-                      transform: { xs: 'none', md: 'translateY(-8px)' },
-                      borderColor: 'rgba(0, 0, 0, 0.12)',
-                      boxShadow: { xs: '0 4px 12px rgba(0,0,0,0.08)', md: '0 8px 24px rgba(0,0,0,0.12)' },
-                      '& .product-image': {
-                        transform: { xs: 'none', md: 'scale(1.05)' },
-                      },
-                      '& .quick-add-btn': {
-                        opacity: { xs: 1, md: 1 },
-                        maxHeight: { xs: '48px', md: '60px' },
-                        paddingTop: { xs: '10px', md: '12px' },
-                        paddingBottom: { xs: '10px', md: '12px' },
-                      },
-                    },
-                  }}
-                >
-                  <Box 
-                    component={Link}
-                    to={`/product/${product.id}`}
-                    sx={{ 
-                      position: 'relative', 
-                      overflow: 'hidden',
-                      textDecoration: 'none',
-                      display: 'block',
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      height={{ xs: 200, sm: 220, md: 250 }}
-                      image={product.images[0]}
-                      alt={product.name}
-                      className="product-image"
-                      sx={{ 
-                        objectFit: 'cover',
-                        width: '100%',
-                        transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                        cursor: 'pointer',
-                      }}
-                    />
-                    {product.featured && (
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          bgcolor: 'rgba(26, 26, 26, 0.9)',
-                          color: 'white',
-                          px: 1.5,
-                          py: 0.5,
-                          borderRadius: 2,
-                          fontSize: '0.75rem',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        FEATURED
-                      </Box>
-                    )}
-                  </Box>
-                  <CardActionArea component={Link} to={`/product/${product.id}`}>
-                    <CardContent sx={{ flexGrow: 1, bgcolor: 'transparent' }}>
-                      <Typography 
-                        variant="body2" 
-                        noWrap 
-                        sx={{ 
-                          mb: 1,
-                          fontWeight: 500,
-                          transition: 'color 0.3s ease',
-                          '&:hover': {
-                            color: 'primary.main',
-                          },
-                        }}
-                      >
-                        {product.name}
-                      </Typography>
-                      <Chip
-                        label={product.category}
-                        size="small"
-                        sx={{ 
-                          mb: 1, 
-                          fontSize: '0.7rem', 
-                          height: 20,
-                          bgcolor: 'primary.main',
-                          color: 'white',
-                          fontWeight: 500,
-                        }}
-                      />
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography 
-                          variant="h6" 
-                          color="primary" 
-                          sx={{ 
-                            fontWeight: 'bold',
-                            fontSize: '1.1rem',
-                          }}
-                        >
-                          {product.price} SYP
-                        </Typography>
-                        {product.originalPrice && (
-                          <Typography
-                            variant="body2"
-                            sx={{ 
-                              textDecoration: 'line-through', 
-                              color: 'text.secondary',
-                              fontSize: '0.85rem',
-                            }}
-                          >
-                            {product.originalPrice} SYP
-                          </Typography>
-                        )}
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <Typography variant="caption" color="text.secondary">
-                          ⭐ {product.rating}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          ({product.reviews})
-                        </Typography>
-                      </Box>
-                    </CardContent>
-                  </CardActionArea>
-                  {/* Quick Add Button - Always visible on mobile, shows on hover on desktop */}
-                  <Button
-                    variant="contained"
-                    className="quick-add-btn"
-                    onClick={(e) => handleQuickAdd(product, e)}
-                    fullWidth
-                    sx={{
-                      borderRadius: { xs: 2, md: 50 },
-                      py: { xs: 1, md: 1.5 },
-                      mt: 'auto',
-                      boxShadow: { xs: '0 2px 8px rgba(0,0,0,0.1)', md: 'none' },
-                      fontWeight: 600,
-                      fontSize: { xs: '0.85rem', md: '0.9rem' },
-                      opacity: { xs: 1, md: 0 },
-                      maxHeight: { xs: '48px', md: 0 },
-                      overflow: 'hidden',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      touchAction: 'manipulation',
-                      '&:active': {
-                        transform: { xs: 'scale(0.98)', md: 'none' },
-                      },
-                      '&:hover': {
-                        boxShadow: { xs: '0 2px 8px rgba(0,0,0,0.1)', md: 'none' },
-                        transform: { xs: 'none', md: 'translateY(-2px)' },
-                        backgroundColor: 'primary.dark',
-                      },
-                    }}
-                  >
-                    Quick Add
-                  </Button>
-                </Card>
+                <ProductCard product={product} />
               </Grid>
             ))}
           </Grid>

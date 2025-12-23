@@ -18,6 +18,7 @@ import {
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
 import { categories } from '../data/mockData';
+import ProductCard from '../components/ProductCard';
 
 const CategoryPage = () => {
   const { category, subcategory } = useParams();
@@ -113,64 +114,10 @@ const CategoryPage = () => {
           </Typography>
         </Box>
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
           {products.map((product) => (
             <Grid item xs={6} sm={4} md={3} key={product.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardActionArea component={Link} to={`/product/${product.id}`}>
-                  <CardMedia
-                    component="img"
-                    height="250"
-                    image={product.images[0]}
-                    alt={product.name}
-                    sx={{ objectFit: 'cover' }}
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="body2" noWrap sx={{ mb: 1 }}>
-                      {product.name}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
-                        {product.price} SYP
-                      </Typography>
-                      {product.originalPrice && (
-                        <Typography
-                          variant="body2"
-                          sx={{ textDecoration: 'line-through', color: 'grey.500' }}
-                        >
-                          {product.originalPrice} SYP
-                        </Typography>
-                      )}
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Typography variant="caption" color="text.secondary">
-                        ⭐ {product.rating}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        ({product.reviews})
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </CardActionArea>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  onClick={(e) => handleQuickAdd(product, e)}
-                  sx={{
-                    borderRadius: 50,
-                    py: 1.5,
-                    mt: 'auto',
-                    boxShadow: 'none',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    '&:hover': {
-                      boxShadow: 'none',
-                      transform: 'translateY(-2px)',
-                    },
-                  }}
-                >
-                  Quick Add
-                </Button>
-              </Card>
+              <ProductCard product={product} />
             </Grid>
           ))}
         </Grid>

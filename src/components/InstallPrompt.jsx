@@ -88,8 +88,8 @@ const InstallPrompt = () => {
           p: 2,
           boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
           borderRadius: 3,
-          background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
-          border: '1px solid rgba(99, 102, 241, 0.2)',
+          background: 'linear-gradient(145deg, #ffffff, #F4F6F6)',
+          border: '1px solid rgba(0, 79, 89, 0.2)',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>

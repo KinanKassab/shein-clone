@@ -90,11 +90,11 @@ const Navbar = () => {
       elevation={scrolled ? 4 : 0}
       sx={{ 
         bgcolor: '#FFFFFF',
-        color: '#2b0000',
+        color: '#022B30',
         zIndex: 1300,
-        borderBottom: scrolled ? 'none' : '1px solid rgba(84, 29, 34, 0.1)',
+        borderBottom: scrolled ? 'none' : '1px solid rgba(0, 79, 89, 0.1)',
         transition: 'all 0.3s ease',
-        boxShadow: scrolled ? '0px 4px 20px rgba(84, 29, 34, 0.1)' : 'none',
+        boxShadow: scrolled ? '0px 4px 20px rgba(0, 79, 89, 0.1)' : 'none',
       }}
     >
       <Container maxWidth="xl">
@@ -116,7 +116,7 @@ const Navbar = () => {
               sx={{ 
                 fontWeight: 800,
                 fontSize: { xs: '1.25rem', md: '1.5rem' },
-                background: 'linear-gradient(135deg, #541d22 0%, #7a3a3f 100%)',
+                background: 'linear-gradient(135deg, #004F59 0%, #7BC0B6 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -147,8 +147,8 @@ const Navbar = () => {
                 sx={{
                   position: 'relative',
                   borderRadius: 3,
-                  backgroundColor: '#f5eded',
-                  border: '1px solid rgba(84, 29, 34, 0.2)',
+                  backgroundColor: '#F4F6F6',
+                  border: '1px solid rgba(0, 79, 89, 0.2)',
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     backgroundColor: '#FFFFFF',
@@ -157,7 +157,7 @@ const Navbar = () => {
                   '&:focus-within': {
                     backgroundColor: '#FFFFFF',
                     borderColor: 'primary.main',
-                    boxShadow: '0px 0px 0px 3px rgba(84, 29, 34, 0.1)',
+                    boxShadow: '0px 0px 0px 3px rgba(0, 79, 89, 0.1)',
                   },
                 }}
               >
@@ -213,10 +213,10 @@ const Navbar = () => {
                   px: 2,
                   py: 1,
                   borderRadius: 2,
-                  bgcolor: 'primary.main',
+                  bgcolor: 'accent.main',
                   transition: 'all 0.2s ease',
                   '&:hover': {
-                    bgcolor: 'primary.dark',
+                    bgcolor: 'accent.dark',
                     transform: 'translateY(-2px)',
                   },
                 }}
@@ -233,7 +233,7 @@ const Navbar = () => {
                   transition: 'transform 0.3s ease',
                 '&:hover': {
                   transform: 'rotate(90deg)',
-                  bgcolor: 'rgba(84, 29, 34, 0.08)',
+                  bgcolor: 'rgba(0, 79, 89, 0.08)',
                 },
                 }}
               >
@@ -251,7 +251,7 @@ const Navbar = () => {
                 transition: 'all 0.3s ease',
                 p: 1.5,
                   '&:hover': {
-                    bgcolor: 'rgba(84, 29, 34, 0.08)',
+                    bgcolor: 'rgba(0, 79, 89, 0.08)',
                     transform: 'scale(1.1)',
                   },
               }}
@@ -284,13 +284,13 @@ const Navbar = () => {
               sx={{
                 position: 'relative',
                 borderRadius: 3,
-                backgroundColor: '#f5eded',
-                border: '1px solid rgba(84, 29, 34, 0.2)',
+                backgroundColor: '#F4F6F6',
+                border: '1px solid rgba(0, 79, 89, 0.2)',
                 transition: 'all 0.3s ease',
                 '&:focus-within': {
                   backgroundColor: '#FFFFFF',
                   borderColor: 'primary.main',
-                  boxShadow: '0px 0px 0px 3px rgba(84, 29, 34, 0.1)',
+                  boxShadow: '0px 0px 0px 3px rgba(0, 79, 89, 0.1)',
                 },
               }}
             >
@@ -338,7 +338,7 @@ const Navbar = () => {
             width: 280,
             bgcolor: '#FFFFFF',
             pt: 2,
-            borderLeft: '1px solid rgba(84, 29, 34, 0.1)',
+            borderLeft: '1px solid rgba(0, 79, 89, 0.1)',
           },
         }}
       >
@@ -356,7 +356,7 @@ const Navbar = () => {
             sx={{
               py: 1.5,
               '&:hover': {
-                bgcolor: 'rgba(233, 30, 99, 0.08)',
+                bgcolor: 'rgba(0, 79, 89, 0.08)',
               },
             }}
           >
@@ -377,7 +377,7 @@ const Navbar = () => {
               sx={{
                 py: 1.5,
                 '&:hover': {
-                  bgcolor: 'rgba(84, 29, 34, 0.08)',
+                  bgcolor: 'rgba(0, 79, 89, 0.08)',
                 },
               }}
             >
@@ -397,7 +397,7 @@ const Navbar = () => {
             sx={{
               py: 1.5,
               '&:hover': {
-                bgcolor: 'rgba(233, 30, 99, 0.08)',
+                bgcolor: 'rgba(0, 79, 89, 0.08)',
               },
             }}
           >
@@ -417,11 +417,11 @@ const Navbar = () => {
               onClick={() => setMobileMenuOpen(false)}
               sx={{
                 py: 1.5,
-                bgcolor: item.highlight ? 'primary.main' : 'transparent',
-                color: item.highlight ? 'white' : 'inherit',
-                '&:hover': {
-                  bgcolor: item.highlight ? 'primary.dark' : 'rgba(84, 29, 34, 0.08)',
-                },
+                  bgcolor: item.highlight ? 'accent.main' : 'transparent',
+                  color: item.highlight ? 'white' : 'inherit',
+                  '&:hover': {
+                    bgcolor: item.highlight ? 'accent.dark' : 'rgba(0, 79, 89, 0.08)',
+                  },
               }}
             >
               <ListItemText 

@@ -14,29 +14,35 @@ import SheinOrderPage from './pages/SheinOrderPage';
 import { CartProvider } from './contexts/CartContext';
 import { ProductProvider } from './contexts/ProductContext';
 
-// Advanced "Soft UI" Theme with Neumorphism-lite aesthetic
-// Neutral palette: creams, charcoal, slate with high-contrast accent
+// Professional Theme based on Logo Colors
+// Deep Teal primary, Terracotta Orange accent, Sage Mint secondary
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1a1a1a', // Charcoal accent for high contrast
-      light: '#4a4a4a',
-      dark: '#0a0a0a',
+      main: '#004F59', // Deep Teal - Headers/Nav
+      light: '#006B77',
+      dark: '#003A42',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#6b7280', // Slate
-      light: '#9ca3af',
-      dark: '#4b5563',
+      main: '#7BC0B6', // Sage Mint - Borders/Icons
+      light: '#9DD4CB',
+      dark: '#5A9A91',
+      contrastText: '#022B30',
+    },
+    accent: {
+      main: '#E07A40', // Terracotta Orange - Buttons/CTAs (use sparingly)
+      light: '#E8966A',
+      dark: '#C85F2A',
       contrastText: '#ffffff',
     },
     background: {
-      default: '#faf9f7', // Cream background
+      default: '#F4F6F6', // Off-White
       paper: '#ffffff',
     },
     text: {
-      primary: '#1a1a1a', // Charcoal
-      secondary: '#6b7280', // Slate
+      primary: '#022B30', // Midnight Green
+      secondary: '#004F59', // Deep Teal for secondary text
     },
     error: {
       main: '#dc2626',
