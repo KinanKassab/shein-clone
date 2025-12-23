@@ -30,11 +30,12 @@ import { banners, categories } from '../data/mockData';
 
 const Homepage = () => {
   const location = useLocation();
-  const { products, featuredProducts, filters, setFilters, sortBy, setSortBy, searchQuery, setSearchQuery } = useProducts();
+  const { products, recommendedProducts, filters, setFilters, sortBy, setSortBy, searchQuery, setSearchQuery } = useProducts();
   const { addToCart } = useCart();
   const [displayedProducts, setDisplayedProducts] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [iconErrors, setIconErrors] = useState({});
   const observerRef = useRef(null);
 
   // Simulate loading state for skeleton demonstration
@@ -60,10 +61,11 @@ const Homepage = () => {
 
   useEffect(() => {
     // Infinite scroll observer
+    const productsToDisplay = searchQuery ? products : recommendedProducts;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && displayedProducts < products.length) {
-          setDisplayedProducts((prev) => Math.min(prev + 12, products.length));
+        if (entries[0].isIntersecting && displayedProducts < productsToDisplay.length) {
+          setDisplayedProducts((prev) => Math.min(prev + 12, productsToDisplay.length));
         }
       },
       { threshold: 0.1 }
@@ -78,7 +80,7 @@ const Homepage = () => {
         observer.unobserve(observerRef.current);
       }
     };
-  }, [displayedProducts, products.length]);
+  }, [displayedProducts, products.length, recommendedProducts.length, searchQuery]);
 
   const handleQuickAdd = (product, e) => {
     e.preventDefault();
@@ -114,8 +116,17 @@ const Homepage = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
-      <Container maxWidth="xl">
+    <Box sx={{ 
+      bgcolor: 'background.default', 
+      minHeight: '100vh',
+      pb: { xs: 3, md: 4 }, // Mobile padding
+    }}>
+      <Container 
+        maxWidth="xl"
+        sx={{
+          px: { xs: 1.5, sm: 2, md: 3 }, // Mobile-first padding
+        }}
+      >
         {/* Modern Bento-Grid Hero Section */}
         {/* Asymmetrical grid: Left 66% (Desktop), Right 33% (Desktop) */}
         {!searchQuery && (
@@ -309,13 +320,20 @@ const Homepage = () => {
         )}
 
         {/* Categories */}
-        <Box sx={{ mb: 6, animation: 'fadeIn 0.6s ease-out' }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', mb: 2 }}>
+        <Box sx={{ mb: { xs: 4, md: 6 }, animation: 'fadeIn 0.6s ease-out' }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: { xs: 'flex-start', sm: 'flex-end' }, 
+            justifyContent: 'space-between', 
+            mb: 2,
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 1, sm: 0 },
+          }}>
             <Box>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                 Shop by Category
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                 Curated collections for every style and occasion.
               </Typography>
             </Box>
@@ -324,7 +342,10 @@ const Homepage = () => {
               to="/category/all"
               size="small"
               variant="outlined"
-              sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+              sx={{ 
+                display: { xs: 'none', sm: 'inline-flex' },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              }}
             >
               View all
             </Button>
@@ -332,21 +353,21 @@ const Homepage = () => {
 
           <Box
             sx={{
-              p: { xs: 2, md: 3 },
-              borderRadius: 3,
+              p: { xs: 1.5, sm: 2, md: 3 },
+              borderRadius: { xs: 2, md: 3 },
               border: '1px solid',
               borderColor: 'grey.200',
               background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 50%, #eef2f7 100%)',
-              boxShadow: '0 16px 40px rgba(0,0,0,0.06)',
+              boxShadow: { xs: '0 4px 12px rgba(0,0,0,0.06)', md: '0 16px 40px rgba(0,0,0,0.06)' },
               position: 'relative',
               overflow: 'hidden',
               '&::after': {
                 content: '""',
                 position: 'absolute',
-                right: -120,
-                top: -120,
-                width: 260,
-                height: 260,
+                right: { xs: -60, md: -120 },
+                top: { xs: -60, md: -120 },
+                width: { xs: 130, md: 260 },
+                height: { xs: 130, md: 260 },
                 borderRadius: '50%',
                 background: 'radial-gradient(circle at center, rgba(99, 102, 241, 0.12), transparent 60%)',
                 pointerEvents: 'none',
@@ -357,11 +378,16 @@ const Homepage = () => {
               sx={{
                 display: 'flex',
                 flexWrap: { xs: 'nowrap', md: 'wrap' },
-                gap: 2,
+                gap: { xs: 1.5, md: 2 },
                 overflowX: 'auto',
+                overflowY: 'hidden',
                 pb: 1,
                 scrollBehavior: 'smooth',
-                '&::-webkit-scrollbar': { height: 8 },
+                WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
+                '&::-webkit-scrollbar': { 
+                  height: { xs: 6, md: 8 },
+                  display: { xs: 'block', md: 'block' },
+                },
                 '&::-webkit-scrollbar-thumb': {
                   bgcolor: 'grey.300',
                   borderRadius: 1,
@@ -371,12 +397,13 @@ const Homepage = () => {
             >
               {categories.map((category, index) => {
                 const previewSubcategories = category.subcategories?.slice(0, 3).join(' • ');
+                const iconError = iconErrors[category.id] || false;
 
                 return (
                   <Box
                     key={category.id}
                     sx={{
-                      minWidth: { xs: 220, sm: 200 },
+                      minWidth: { xs: 180, sm: 200 },
                       flex: { 
                         xs: '0 0 auto', 
                         md: '1 0 calc(25% - 16px)',
@@ -395,15 +422,19 @@ const Homepage = () => {
                         height: '100%',
                         textDecoration: 'none',
                         color: 'inherit',
-                        borderRadius: 3,
-                        p: 2.5,
+                        borderRadius: { xs: 2, md: 3 },
+                        p: { xs: 2, md: 2.5 },
                         border: '1px solid',
                         borderColor: 'grey.100',
                         background: 'linear-gradient(160deg, #ffffff, #f8fafc)',
-                        boxShadow: '0 12px 30px rgba(0,0,0,0.06)',
+                        boxShadow: { xs: '0 4px 12px rgba(0,0,0,0.06)', md: '0 12px 30px rgba(0,0,0,0.06)' },
                         transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                         position: 'relative',
                         overflow: 'hidden',
+                        touchAction: 'manipulation',
+                        '&:active': {
+                          transform: { xs: 'scale(0.98)', md: 'none' },
+                        },
                         '&::before': {
                           content: '""',
                           position: 'absolute',
@@ -413,13 +444,13 @@ const Homepage = () => {
                           transition: 'opacity 0.3s ease',
                         },
                         '&:hover': {
-                          transform: 'translateY(-6px)',
+                          transform: { xs: 'none', md: 'translateY(-6px)' },
                           borderColor: 'primary.light',
-                          boxShadow: '0 18px 45px rgba(15,23,42,0.12)',
+                          boxShadow: { xs: '0 4px 12px rgba(0,0,0,0.06)', md: '0 18px 45px rgba(15,23,42,0.12)' },
                           '&::before': { opacity: 1 },
                           '& .category-icon': {
-                            transform: 'scale(1.08) rotate(4deg)',
-                            boxShadow: '0 12px 25px rgba(99,102,241,0.25)',
+                            transform: { xs: 'scale(1.02)', md: 'scale(1.08) rotate(4deg)' },
+                            boxShadow: { xs: '0 6px 14px rgba(79,70,229,0.18)', md: '0 12px 25px rgba(99,102,241,0.25)' },
                           },
                         },
                       }}
@@ -428,20 +459,37 @@ const Homepage = () => {
                         <Box
                           className="category-icon"
                           sx={{
-                            width: 48,
-                            height: 48,
+                            width: { xs: 44, md: 48 },
+                            height: { xs: 44, md: 48 },
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: 26,
                             background: 'linear-gradient(145deg, #eef2ff, #e0e7ff)',
-                            color: '#1e1b4b',
                             boxShadow: '0 6px 14px rgba(79,70,229,0.18)',
                             transition: 'all 0.3s ease',
+                            overflow: 'hidden',
+                            p: 0.5,
+                            fontSize: { xs: 24, md: 26 },
+                            color: '#1e1b4b',
                           }}
                         >
-                          {category.icon}
+                          {!iconError ? (
+                            <img 
+                              src={category.icon} 
+                              alt={category.name}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain',
+                              }}
+                              onError={() => setIconErrors(prev => ({ ...prev, [category.id]: true }))}
+                            />
+                          ) : (
+                            <Box component="span" sx={{ fontSize: 'inherit' }}>
+                              {category.fallbackIcon || '📦'}
+                            </Box>
+                          )}
                         </Box>
                         <Box>
                           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
@@ -491,191 +539,6 @@ const Homepage = () => {
           </Box>
         </Box>
 
-        {/* Featured Products - Only show if not searching */}
-        {!searchQuery && (
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Featured Products
-            </Typography>
-            {isLoading ? (
-              <Grid container spacing={3}>
-                {[...Array(4)].map((_, index) => (
-                  <Grid item xs={6} sm={4} md={3} key={index}>
-                    <Skeleton variant="rectangular" height={250} sx={{ borderRadius: 2, mb: 1 }} />
-                    <Skeleton variant="text" width="80%" height={24} sx={{ mb: 1 }} />
-                    <Skeleton variant="text" width="40%" height={20} />
-                  </Grid>
-                ))}
-              </Grid>
-            ) : (
-              <Grid container spacing={3}>
-                {featuredProducts.slice(0, 4).map((product, index) => (
-                  <Grid 
-                    item 
-                    xs={6} 
-                    sm={4} 
-                    md={3}
-                    lg={3}
-                    xl={3}
-                    key={product.id}
-                    sx={{
-                      animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`,
-                    }}
-                  >
-                    {/* Glassmorphism Product Card */}
-                    <Card 
-                      sx={{ 
-                        height: '100%', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        overflow: 'hidden',
-                        // Glassmorphism: transparent background, subtle border, no shadow
-                        bgcolor: 'rgba(255, 255, 255, 0.7)',
-                        backdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(0, 0, 0, 0.08)',
-                        boxShadow: 'none',
-                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                        '&:hover': {
-                          transform: 'translateY(-8px)',
-                          borderColor: 'rgba(0, 0, 0, 0.12)',
-                          '& .product-image': {
-                            transform: 'scale(1.05)',
-                          },
-                          '& .quick-add-btn': {
-                            opacity: 1,
-                            maxHeight: '60px',
-                            paddingTop: '12px',
-                            paddingBottom: '12px',
-                          },
-                        },
-                      }}
-                    >
-                      <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-                        <CardMedia
-                          component="img"
-                          height="250"
-                          image={product.images[0]}
-                          alt={product.name}
-                          className="product-image"
-                          sx={{ 
-                            objectFit: 'cover',
-                            transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                          }}
-                        />
-                        {product.featured && (
-                          <Box
-                            sx={{
-                              position: 'absolute',
-                              top: 8,
-                              right: 8,
-                              bgcolor: 'rgba(26, 26, 26, 0.9)',
-                              color: 'white',
-                              px: 1.5,
-                              py: 0.5,
-                              borderRadius: 2,
-                              fontSize: '0.75rem',
-                              fontWeight: 'bold',
-                            }}
-                          >
-                            FEATURED
-                          </Box>
-                        )}
-                      </Box>
-                      <CardActionArea component={Link} to={`/product/${product.id}`}>
-                        <CardContent sx={{ flexGrow: 1, bgcolor: 'transparent' }}>
-                          <Typography 
-                            variant="body2" 
-                            noWrap 
-                            sx={{ 
-                              mb: 1,
-                              fontWeight: 500,
-                              transition: 'color 0.3s ease',
-                              '&:hover': {
-                                color: 'primary.main',
-                              },
-                            }}
-                          >
-                            {product.name}
-                          </Typography>
-                          <Chip
-                            label={product.category}
-                            size="small"
-                            sx={{ 
-                              mb: 1, 
-                              fontSize: '0.7rem', 
-                              height: 20,
-                              bgcolor: 'primary.main',
-                              color: 'white',
-                              fontWeight: 500,
-                            }}
-                          />
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                            <Typography 
-                              variant="h6" 
-                              color="primary" 
-                              sx={{ 
-                                fontWeight: 'bold',
-                                fontSize: '1.1rem',
-                              }}
-                            >
-                              {product.price} SYP
-                            </Typography>
-                            {product.originalPrice && (
-                              <Typography
-                                variant="body2"
-                                sx={{ 
-                                  textDecoration: 'line-through', 
-                                  color: 'text.secondary',
-                                  fontSize: '0.85rem',
-                                }}
-                              >
-                                {product.originalPrice} SYP
-                              </Typography>
-                            )}
-                          </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <Typography variant="caption" color="text.secondary">
-                              ⭐ {product.rating}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              ({product.reviews})
-                            </Typography>
-                          </Box>
-                        </CardContent>
-                      </CardActionArea>
-                      {/* Quick Add Button - Hidden by default, shows on hover */}
-                      <Button
-                        variant="contained"
-                        className="quick-add-btn"
-                        onClick={(e) => handleQuickAdd(product, e)}
-                        fullWidth
-                        sx={{
-                          borderRadius: 50,
-                          py: 1.5,
-                          mt: 'auto',
-                          boxShadow: 'none',
-                          fontWeight: 600,
-                          fontSize: '0.9rem',
-                          opacity: 0,
-                          maxHeight: 0,
-                          overflow: 'hidden',
-                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                          '&:hover': {
-                            boxShadow: 'none',
-                            transform: 'translateY(-2px)',
-                            backgroundColor: 'primary.dark',
-                          },
-                        }}
-                      >
-                        Quick Add
-                      </Button>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            )}
-          </Box>
-        )}
 
         {/* Filter and Sort Section */}
         <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
@@ -804,11 +667,18 @@ const Homepage = () => {
           </Accordion>
         )}
 
-        {/* All Products */}
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-          {searchQuery ? `Search Results for "${searchQuery}"` : 'All Products'}
-        </Typography>
-        {products.length === 0 ? (
+        {/* You Might Also Like / Handpicked for You */}
+        {!searchQuery && (
+          <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
+            You Might Also Like
+          </Typography>
+        )}
+        {searchQuery && (
+          <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
+            Search Results for "{searchQuery}"
+          </Typography>
+        )}
+        {(searchQuery ? products : recommendedProducts).length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               No products found
@@ -852,8 +722,8 @@ const Homepage = () => {
             ))}
           </Grid>
         ) : (
-          <Grid container spacing={3}>
-            {products.slice(0, displayedProducts).map((product, index) => (
+          <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
+            {(searchQuery ? products : recommendedProducts).slice(0, displayedProducts).map((product, index) => (
               <Grid 
                 item 
                 xs={6} 
@@ -878,38 +748,55 @@ const Homepage = () => {
                     display: 'flex', 
                     flexDirection: 'column',
                     overflow: 'hidden',
-                    // Glassmorphism: transparent background, subtle border, no shadow
-                    bgcolor: 'rgba(255, 255, 255, 0.7)',
+                    // Mobile-first: App-like UI with rounded corners and shadows
+                    bgcolor: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(10px)',
                     border: '1px solid rgba(0, 0, 0, 0.08)',
-                    boxShadow: 'none',
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    borderRadius: { xs: 3, sm: 3, md: 2 },
+                    boxShadow: { xs: '0 4px 12px rgba(0,0,0,0.08)', md: 'none' },
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     cursor: 'pointer',
+                    touchAction: 'manipulation', // Better touch handling
+                    '&:active': {
+                      transform: { xs: 'scale(0.98)', md: 'none' },
+                    },
                     '&:hover': {
-                      transform: 'translateY(-8px)',
+                      transform: { xs: 'none', md: 'translateY(-8px)' },
                       borderColor: 'rgba(0, 0, 0, 0.12)',
+                      boxShadow: { xs: '0 4px 12px rgba(0,0,0,0.08)', md: '0 8px 24px rgba(0,0,0,0.12)' },
                       '& .product-image': {
-                        transform: 'scale(1.05)',
+                        transform: { xs: 'none', md: 'scale(1.05)' },
                       },
                       '& .quick-add-btn': {
-                        opacity: 1,
-                        maxHeight: '60px',
-                        paddingTop: '12px',
-                        paddingBottom: '12px',
+                        opacity: { xs: 1, md: 1 },
+                        maxHeight: { xs: '48px', md: '60px' },
+                        paddingTop: { xs: '10px', md: '12px' },
+                        paddingBottom: { xs: '10px', md: '12px' },
                       },
                     },
                   }}
                 >
-                  <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+                  <Box 
+                    component={Link}
+                    to={`/product/${product.id}`}
+                    sx={{ 
+                      position: 'relative', 
+                      overflow: 'hidden',
+                      textDecoration: 'none',
+                      display: 'block',
+                    }}
+                  >
                     <CardMedia
                       component="img"
-                      height="250"
+                      height={{ xs: 200, sm: 220, md: 250 }}
                       image={product.images[0]}
                       alt={product.name}
                       className="product-image"
                       sx={{ 
                         objectFit: 'cover',
+                        width: '100%',
                         transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                        cursor: 'pointer',
                       }}
                     />
                     {product.featured && (
@@ -993,26 +880,30 @@ const Homepage = () => {
                       </Box>
                     </CardContent>
                   </CardActionArea>
-                  {/* Quick Add Button - Hidden by default, shows on hover */}
+                  {/* Quick Add Button - Always visible on mobile, shows on hover on desktop */}
                   <Button
                     variant="contained"
                     className="quick-add-btn"
                     onClick={(e) => handleQuickAdd(product, e)}
                     fullWidth
                     sx={{
-                      borderRadius: 50,
-                      py: 1.5,
+                      borderRadius: { xs: 2, md: 50 },
+                      py: { xs: 1, md: 1.5 },
                       mt: 'auto',
-                      boxShadow: 'none',
+                      boxShadow: { xs: '0 2px 8px rgba(0,0,0,0.1)', md: 'none' },
                       fontWeight: 600,
-                      fontSize: '0.9rem',
-                      opacity: 0,
-                      maxHeight: 0,
+                      fontSize: { xs: '0.85rem', md: '0.9rem' },
+                      opacity: { xs: 1, md: 0 },
+                      maxHeight: { xs: '48px', md: 0 },
                       overflow: 'hidden',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      touchAction: 'manipulation',
+                      '&:active': {
+                        transform: { xs: 'scale(0.98)', md: 'none' },
+                      },
                       '&:hover': {
-                        boxShadow: 'none',
-                        transform: 'translateY(-2px)',
+                        boxShadow: { xs: '0 2px 8px rgba(0,0,0,0.1)', md: 'none' },
+                        transform: { xs: 'none', md: 'translateY(-2px)' },
                         backgroundColor: 'primary.dark',
                       },
                     }}
@@ -1026,7 +917,7 @@ const Homepage = () => {
         )}
 
         {/* Infinite Scroll Trigger - Using Skeleton instead of CircularProgress */}
-        {displayedProducts < products.length && (
+        {displayedProducts < (searchQuery ? products : recommendedProducts).length && (
           <Box ref={observerRef} sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
             <Grid container spacing={3}>
               {[...Array(4)].map((_, index) => (

@@ -93,6 +93,37 @@ export const ProductProvider = ({ children }) => {
     return allProducts.filter((product) => product.featured);
   }, [allProducts]);
 
+  // Recommendation logic: Show products with high ratings, featured products, and popular items
+  const recommendedProducts = useMemo(() => {
+    let recommended = [...allProducts];
+    
+    // Prioritize featured products, high ratings, and popular items
+    recommended.sort((a, b) => {
+      let scoreA = 0;
+      let scoreB = 0;
+      
+      // Featured products get higher priority
+      if (a.featured) scoreA += 10;
+      if (b.featured) scoreB += 10;
+      
+      // Higher ratings get more points
+      scoreA += a.rating * 2;
+      scoreB += b.rating * 2;
+      
+      // More reviews indicate popularity
+      scoreA += Math.min(a.reviews / 10, 5);
+      scoreB += Math.min(b.reviews / 10, 5);
+      
+      // Newer products get slight boost
+      scoreA += (a.id / 100);
+      scoreB += (b.id / 100);
+      
+      return scoreB - scoreA;
+    });
+    
+    return recommended;
+  }, [allProducts]);
+
   const getProductById = (id) => {
     return allProducts.find((product) => product.id === parseInt(id));
   };
@@ -106,6 +137,7 @@ export const ProductProvider = ({ children }) => {
       value={{
         products: filteredAndSortedProducts,
         featuredProducts,
+        recommendedProducts,
         filters,
         setFilters,
         sortBy,

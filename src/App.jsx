@@ -1,13 +1,16 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import InstallPrompt from './components/InstallPrompt';
+import PageTransition from './components/PageTransition';
 import Homepage from './pages/Homepage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import ContactPage from './pages/ContactPage';
 import CategoryPage from './pages/CategoryPage';
+import SheinOrderPage from './pages/SheinOrderPage';
 import { CartProvider } from './contexts/CartContext';
 import { ProductProvider } from './contexts/ProductContext';
 
@@ -121,39 +124,56 @@ const theme = createTheme({
   },
 });
 
+function AppContent() {
+  const location = useLocation();
+  
+  return (
+    <ProductProvider>
+      <CartProvider>
+        {/* Sticky Footer Layout: Flex container with minHeight 100vh */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            // PWA safe areas
+            paddingTop: { xs: 'env(safe-area-inset-top)', md: 0 },
+            paddingBottom: { xs: 'env(safe-area-inset-bottom)', md: 0 },
+            paddingLeft: { xs: 'env(safe-area-inset-left)', md: 0 },
+            paddingRight: { xs: 'env(safe-area-inset-right)', md: 0 },
+          }}
+        >
+          <Navbar />
+          {/* Main content area with flexGrow to push footer down */}
+          <Box sx={{ flexGrow: 1 }}>
+            <PageTransition key={location.pathname}>
+              <Routes location={location}>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/product/:id" element={<ProductPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/shein-order" element={<SheinOrderPage />} />
+                <Route path="/category/:category/:subcategory" element={<CategoryPage />} />
+                <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/search" element={<Homepage />} />
+              </Routes>
+            </PageTransition>
+          </Box>
+          <Footer />
+          <InstallPrompt />
+        </Box>
+      </CartProvider>
+    </ProductProvider>
+  );
+}
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <ProductProvider>
-          <CartProvider>
-            {/* Sticky Footer Layout: Flex container with minHeight 100vh */}
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: '100vh',
-              }}
-            >
-              <Navbar />
-              {/* Main content area with flexGrow to push footer down */}
-              <Box sx={{ flexGrow: 1 }}>
-                <Routes>
-                  <Route path="/" element={<Homepage />} />
-                  <Route path="/product/:id" element={<ProductPage />} />
-                  <Route path="/cart" element={<CartPage />} />
-                  <Route path="/checkout" element={<CheckoutPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/category/:category/:subcategory" element={<CategoryPage />} />
-                  <Route path="/category/:category" element={<CategoryPage />} />
-                  <Route path="/search" element={<Homepage />} />
-                </Routes>
-              </Box>
-              <Footer />
-            </Box>
-          </CartProvider>
-        </ProductProvider>
+        <AppContent />
       </Router>
     </ThemeProvider>
   );

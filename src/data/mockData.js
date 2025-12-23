@@ -1,45 +1,54 @@
 // Mock product data
+// Note: Category icons should be PNG files placed in public/icons/categories/ folder
+// Or update these paths to point to your icon image URLs
 export const categories = [
   {
     id: 1,
     name: 'Men',
-    icon: '👔',
+    icon: '/icons/categories/men.png', // Place PNG file in public/icons/categories/men.png
+    fallbackIcon: '👔',
     subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
   },
   {
     id: 2,
     name: 'Women',
-    icon: '👗',
+    icon: '/icons/categories/women.png', // Place PNG file in public/icons/categories/women.png
+    fallbackIcon: '👗',
     subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags', 'Makeup', 'Skirts', 'Dresses'],
   },
   {
     id: 3,
     name: 'Children',
-    icon: '👶',
+    icon: '/icons/categories/children.png', // Place PNG file in public/icons/categories/children.png
+    fallbackIcon: '👶',
     subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
   },
   {
     id: 4,
     name: 'Baby',
-    icon: '👶',
+    icon: '/icons/categories/baby.png', // Place PNG file in public/icons/categories/baby.png
+    fallbackIcon: '👶',
     subcategories: ['Sweaters', 'Pants', 'Shirts', 'Jackets', 'Accessories', 'Shoes', 'Bags'],
   },
   {
     id: 5,
     name: 'Electronics',
-    icon: '📱',
+    icon: '/icons/categories/electronics.png', // Place PNG file in public/icons/categories/electronics.png
+    fallbackIcon: '📱',
     subcategories: ['Mobile Phones', 'Laptops', 'Phone Cases', 'Cables'],
   },
   {
     id: 6,
     name: 'Cars',
-    icon: '🚗',
+    icon: '/icons/categories/cars.png', // Place PNG file in public/icons/categories/cars.png
+    fallbackIcon: '🚗',
     subcategories: [],
   },
   {
     id: 7,
     name: 'Home',
-    icon: '🏠',
+    icon: '/icons/categories/home.png', // Place PNG file in public/icons/categories/home.png
+    fallbackIcon: '🏠',
     subcategories: [],
   },
 ];

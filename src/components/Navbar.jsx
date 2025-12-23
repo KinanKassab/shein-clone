@@ -20,6 +20,7 @@ import {
 import SearchIcon from '../assets/icons/SearchIcon';
 import CartIcon from '../assets/icons/CartIcon';
 import MenuIcon from '../assets/icons/MenuIcon';
+import SheinIcon from '../assets/icons/SheinIcon';
 import { useCart } from '../contexts/CartContext';
 import { useProducts } from '../contexts/ProductContext';
 
@@ -79,6 +80,10 @@ const Navbar = () => {
     { text: 'Home', to: '/category/home' },
   ];
 
+  const specialLinks = [
+    { text: 'Order from SHEIN', to: '/shein-order', highlight: true },
+  ];
+
   return (
     <AppBar 
       position="sticky" 
@@ -125,33 +130,6 @@ const Navbar = () => {
               LookyStore
             </Typography>
           </Link>
-
-          {/* Desktop Navigation Links */}
-          {!isMobile && (
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flex: 1, justifyContent: 'center', mx: 4 }}>
-              {navLinks.map((link) => (
-                <Button
-                  key={link.text}
-                  component={Link}
-                  to={link.to}
-                  sx={{
-                    color: location.pathname.includes(link.to) ? 'primary.main' : 'text.primary',
-                    fontWeight: location.pathname.includes(link.to) ? 600 : 500,
-                    px: 2,
-                    py: 1,
-                    borderRadius: 2,
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      bgcolor: 'rgba(84, 29, 34, 0.08)',
-                      color: 'primary.main',
-                    },
-                  }}
-                >
-                  {link.text}
-                </Button>
-              ))}
-            </Box>
-          )}
 
           {/* Search Bar - Desktop */}
           {!isMobile && (
@@ -224,6 +202,28 @@ const Navbar = () => {
 
           {/* Right Side Icons */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Desktop: Order from Shein Button */}
+            {!isMobile && (
+              <Button
+                component={Link}
+                to="/shein-order"
+                variant="contained"
+                sx={{
+                  color: 'white',
+                  px: 2,
+                  py: 1,
+                  borderRadius: 2,
+                  bgcolor: 'primary.main',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                    transform: 'translateY(-2px)',
+                  },
+                }}
+              >
+                <SheinIcon color="white" width={70} height={20} />
+              </Button>
+            )}
             {/* Mobile Menu Button */}
             {isMobile && (
               <IconButton
@@ -408,6 +408,30 @@ const Navbar = () => {
               }}
             />
           </ListItem>
+          {specialLinks.map((item) => (
+            <ListItem
+              key={item.text}
+              button
+              component={Link}
+              to={item.to}
+              onClick={() => setMobileMenuOpen(false)}
+              sx={{
+                py: 1.5,
+                bgcolor: item.highlight ? 'primary.main' : 'transparent',
+                color: item.highlight ? 'white' : 'inherit',
+                '&:hover': {
+                  bgcolor: item.highlight ? 'primary.dark' : 'rgba(84, 29, 34, 0.08)',
+                },
+              }}
+            >
+              <ListItemText 
+                primary={item.text}
+                primaryTypographyProps={{
+                  sx: { fontWeight: item.highlight ? 600 : 500 },
+                }}
+              />
+            </ListItem>
+          ))}
         </List>
       </Drawer>
     </AppBar>
