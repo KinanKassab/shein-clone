@@ -9,16 +9,16 @@ import {
   Grid,
   Paper,
   Divider,
-  Alert,
   CircularProgress,
-  Snackbar,
 } from '@mui/material';
 import { useCart } from '../contexts/CartContext';
+import { useNotification } from '../contexts/NotificationContext';
 import axios from 'axios';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cartItems, cartTotal, clearCart } = useCart();
+  const { showSuccess, showError } = useNotification();
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -26,7 +26,6 @@ const CheckoutPage = () => {
     notes: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const shippingCost = cartTotal > 50 ? 0 : 5.99;
   const tax = cartTotal * 0.08;
@@ -59,21 +58,13 @@ const CheckoutPage = () => {
   const handlePlaceOrder = async () => {
     // Validate form
     if (!formData.fullName.trim() || !formData.phone.trim() || !formData.address.trim()) {
-      setSnackbar({
-        open: true,
-        message: 'Please fill in all required fields',
-        severity: 'error',
-      });
+      showError('Please fill in all required fields');
       return;
     }
 
     // Validate Syrian phone number format
     if (!/^09\d{8}$/.test(formData.phone)) {
-      setSnackbar({
-        open: true,
-        message: 'Please enter a valid Syrian phone number (09XXXXXXXX)',
-        severity: 'error',
-      });
+      showError('Please enter a valid Syrian phone number (09XXXXXXXX)');
       return;
     }
 
@@ -128,11 +119,7 @@ const CheckoutPage = () => {
         clearCart();
 
         // Show success message
-        setSnackbar({
-          open: true,
-          message: `Order placed successfully! Order Number: ${orderPayload.orderNumber}`,
-          severity: 'success',
-        });
+        showSuccess(`Order placed successfully! Order Number: ${orderPayload.orderNumber}`, { duration: 3000 });
 
         // Navigate home after a short delay
         setTimeout(() => {
@@ -143,18 +130,10 @@ const CheckoutPage = () => {
       }
     } catch (error) {
       console.error('Order submission error:', error);
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.error || error.message || 'Failed to submit order. Please try again.',
-        severity: 'error',
-      });
+      showError(error.response?.data?.error || error.message || 'Failed to submit order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
   };
 
   if (cartItems.length === 0) {
@@ -411,21 +390,6 @@ const CheckoutPage = () => {
         </Grid>
       </Grid>
 
-      {/* Success/Error Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Container>
   );
 };

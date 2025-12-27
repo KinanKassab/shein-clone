@@ -15,10 +15,12 @@ import {
 import { Delete as DeleteIcon, Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useNotification } from '../contexts/NotificationContext';
 
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
+  const { showSuccess, showInfo } = useNotification();
 
   const shippingCost = cartTotal > 50 ? 0 : 5.99;
   const tax = cartTotal * 0.08; // 8% tax
@@ -98,9 +100,10 @@ const CartPage = () => {
 
                     <IconButton
                       color="error"
-                      onClick={() =>
-                        removeFromCart(item.id, item.selectedSize, item.selectedColor)
-                      }
+                      onClick={() => {
+                        removeFromCart(item.id, item.selectedSize, item.selectedColor);
+                        showInfo(`${item.name} removed from cart`);
+                      }}
                       sx={{ ml: 'auto' }}
                     >
                       <DeleteIcon />
@@ -111,7 +114,14 @@ const CartPage = () => {
             </Card>
           ))}
 
-          <Button variant="outlined" onClick={clearCart} sx={{ mt: 2 }}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              clearCart();
+              showInfo('Cart cleared');
+            }}
+            sx={{ mt: 2 }}
+          >
             Clear Cart
           </Button>
         </Grid>

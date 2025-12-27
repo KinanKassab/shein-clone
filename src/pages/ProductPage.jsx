@@ -22,12 +22,14 @@ import {
 import { ArrowBack, ArrowForward, Close as CloseIcon } from '@mui/icons-material';
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getProductById } = useProducts();
   const { addToCart } = useCart();
+  const { showSuccess, showError } = useNotification();
   const [product, setProduct] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
@@ -71,10 +73,16 @@ const ProductPage = () => {
 
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
-      alert('Please select size and color');
+      showError('Please select size and color');
       return;
     }
     addToCart(product, selectedSize, selectedColor, quantity);
+    showSuccess(`${product.name} added to cart!`, {
+      action: {
+        label: 'View Cart',
+        onClick: () => navigate('/cart'),
+      },
+    });
   };
 
   const handleNextImage = () => {

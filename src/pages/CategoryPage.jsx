@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
+import { useNotification } from '../contexts/NotificationContext';
 import { categories } from '../data/mockData';
 import ProductCard from '../components/ProductCard';
 
@@ -24,6 +25,7 @@ const CategoryPage = () => {
   const { category, subcategory } = useParams();
   const { products, filters, setFilters, sortBy, setSortBy } = useProducts();
   const { addToCart } = useCart();
+  const { showSuccess } = useNotification();
 
   const categoryName = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'All';
   const subcategoryName = subcategory 
@@ -51,6 +53,7 @@ const CategoryPage = () => {
     const defaultSize = product.sizes[0];
     const defaultColor = product.colors[0];
     addToCart(product, defaultSize, defaultColor, 1);
+    showSuccess(`${product.name} added to cart!`);
   };
 
   const currentCategory = categories.find(c => c.name === categoryName);

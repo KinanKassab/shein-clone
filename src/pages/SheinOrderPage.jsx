@@ -6,15 +6,15 @@ import {
   TextField,
   Button,
   Paper,
-  Alert,
   CircularProgress,
-  Snackbar,
   InputAdornment,
 } from '@mui/material';
 import { Link as LinkIcon, ShoppingCart } from '@mui/icons-material';
+import { useNotification } from '../contexts/NotificationContext';
 import axios from 'axios';
 
 const SheinOrderPage = () => {
+  const { showSuccess, showError } = useNotification();
   const [formData, setFormData] = useState({
     productUrl: '',
     quantity: 1,
@@ -23,7 +23,6 @@ const SheinOrderPage = () => {
     address: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const handleChange = (field) => (e) => {
     let value = e.target.value;
@@ -66,39 +65,23 @@ const SheinOrderPage = () => {
   const handleSubmitOrder = async () => {
     // Validate form
     if (!formData.productUrl.trim()) {
-      setSnackbar({
-        open: true,
-        message: 'Please enter a SHEIN product URL',
-        severity: 'error',
-      });
+      showError('Please enter a SHEIN product URL');
       return;
     }
 
     if (!validateSheinUrl(formData.productUrl)) {
-      setSnackbar({
-        open: true,
-        message: 'Please enter a valid SHEIN product URL',
-        severity: 'error',
-      });
+      showError('Please enter a valid SHEIN product URL');
       return;
     }
 
     if (!formData.fullName.trim() || !formData.phone.trim() || !formData.address.trim()) {
-      setSnackbar({
-        open: true,
-        message: 'Please fill in all required fields',
-        severity: 'error',
-      });
+      showError('Please fill in all required fields');
       return;
     }
 
     // Validate Syrian phone number format
     if (!/^09\d{8}$/.test(formData.phone)) {
-      setSnackbar({
-        open: true,
-        message: 'Please enter a valid Syrian phone number (09XXXXXXXX)',
-        severity: 'error',
-      });
+      showError('Please enter a valid Syrian phone number (09XXXXXXXX)');
       return;
     }
 
@@ -129,11 +112,7 @@ const SheinOrderPage = () => {
 
       if (response.data.success) {
         // Show success message
-        setSnackbar({
-          open: true,
-          message: `Order submitted successfully! Order Number: ${orderPayload.orderNumber}`,
-          severity: 'success',
-        });
+        showSuccess(`Order submitted successfully! Order Number: ${orderPayload.orderNumber}`, { duration: 3000 });
 
         // Reset form
         setFormData({
@@ -148,18 +127,10 @@ const SheinOrderPage = () => {
       }
     } catch (error) {
       console.error('Order submission error:', error);
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.error || error.message || 'Failed to submit order. Please try again.',
-        severity: 'error',
-      });
+      showError(error.response?.data?.error || error.message || 'Failed to submit order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -364,25 +335,8 @@ const SheinOrderPage = () => {
         </Paper>
       </Box>
 
-      {/* Success/Error Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Container>
   );
 };
 
 export default SheinOrderPage;
-
-
