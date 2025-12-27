@@ -80,19 +80,15 @@ const CheckoutPage = () => {
     setIsSubmitting(true);
 
     try {
-      // Build order payload with product links
-      const orderItems = cartItems.map((item) => {
-        // Generate product link (assuming the site URL structure)
-        const productLink = `${window.location.origin}/product/${item.id}`;
-        return {
-          name: item.name,
-          link: productLink,
-          quantity: item.quantity,
-          price: item.price,
-          size: item.selectedSize,
-          color: item.selectedColor,
-        };
-      });
+      // Build order payload with SHEIN product links from mock data
+      const orderItems = cartItems.map((item) => ({
+        name: item.name,
+        link: item.link,
+        quantity: item.quantity,
+        price: item.price,
+        size: item.selectedSize,
+        color: item.selectedColor,
+      }));
 
       const orderPayload = {
         customer: {
