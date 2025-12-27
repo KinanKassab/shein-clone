@@ -25,6 +25,7 @@ import { useCart } from '../contexts/CartContext';
 import { useProducts } from '../contexts/ProductContext';
 
 const Navbar = () => {
+  const SEARCH_DISABLED = true;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    if (SEARCH_DISABLED) return;
     if (searchQuery.trim()) {
       setFilters((prev) => ({
         ...prev,
@@ -140,6 +142,8 @@ const Navbar = () => {
                 flex: 1,
                 maxWidth: 500,
                 mx: 3,
+                opacity: SEARCH_DISABLED ? 0.6 : 1,
+                pointerEvents: SEARCH_DISABLED ? 'none' : 'auto',
               }}
             >
               <Box
@@ -147,23 +151,24 @@ const Navbar = () => {
                   position: 'relative',
                   borderRadius: 3,
                   backgroundColor: '#F4F6F6',
-                  border: '1px solid rgba(0, 79, 89, 0.2)',
+                  border: SEARCH_DISABLED ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(0, 79, 89, 0.2)',
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    backgroundColor: '#FFFFFF',
-                    borderColor: 'primary.light',
+                    backgroundColor: SEARCH_DISABLED ? '#F4F6F6' : '#FFFFFF',
+                    borderColor: SEARCH_DISABLED ? 'rgba(0, 0, 0, 0.1)' : 'primary.light',
                   },
                   '&:focus-within': {
-                    backgroundColor: '#FFFFFF',
-                    borderColor: 'primary.main',
-                    boxShadow: '0px 0px 0px 3px rgba(0, 79, 89, 0.1)',
+                    backgroundColor: SEARCH_DISABLED ? '#F4F6F6' : '#FFFFFF',
+                    borderColor: SEARCH_DISABLED ? 'rgba(0, 0, 0, 0.1)' : 'primary.main',
+                    boxShadow: SEARCH_DISABLED ? 'none' : '0px 0px 0px 3px rgba(0, 79, 89, 0.1)',
                   },
                 }}
               >
                 <InputBase
-                  placeholder="Search products..."
+                  placeholder={SEARCH_DISABLED ? 'Search coming soon...' : 'Search products...'}
                   value={searchQuery}
                   onChange={handleSearchChange}
+                  disabled={SEARCH_DISABLED}
                   sx={{
                     color: 'text.primary',
                     width: '100%',
@@ -173,23 +178,27 @@ const Navbar = () => {
                     fontSize: '0.95rem',
                     '&::placeholder': {
                       color: 'text.secondary',
-                      opacity: 0.7,
+                      opacity: SEARCH_DISABLED ? 0.5 : 0.7,
+                    },
+                    '&.Mui-disabled': {
+                      color: 'text.secondary',
                     },
                   }}
                 />
                 <IconButton
                   type="submit"
-                  sx={{ 
+                  disabled={SEARCH_DISABLED}
+                  sx={{
                     color: 'text.secondary',
-                    position: 'absolute', 
+                    position: 'absolute',
                     right: 4,
                     top: '50%',
                     transform: 'translateY(-50%)',
                     p: 1,
                     transition: 'all 0.2s ease',
                     '&:hover': {
-                      color: 'primary.main',
-                      transform: 'translateY(-50%) scale(1.1)',
+                      color: SEARCH_DISABLED ? 'text.secondary' : 'primary.main',
+                      transform: SEARCH_DISABLED ? 'translateY(-50%)' : 'translateY(-50%) scale(1.1)',
                     },
                   }}
                 >
@@ -295,7 +304,7 @@ const Navbar = () => {
 
         {/* Mobile Search */}
         {isMobile && (
-          <Box sx={{ px: 2, pb: 2 }}>
+          <Box sx={{ px: 2, pb: 2, opacity: SEARCH_DISABLED ? 0.6 : 1, pointerEvents: SEARCH_DISABLED ? 'none' : 'auto' }}>
             <Box
               component="form"
               onSubmit={handleSearch}
@@ -303,19 +312,20 @@ const Navbar = () => {
                 position: 'relative',
                 borderRadius: 3,
                 backgroundColor: '#F4F6F6',
-                border: '1px solid rgba(0, 79, 89, 0.2)',
+                border: SEARCH_DISABLED ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(0, 79, 89, 0.2)',
                 transition: 'all 0.3s ease',
                 '&:focus-within': {
-                  backgroundColor: '#FFFFFF',
-                  borderColor: 'primary.main',
-                  boxShadow: '0px 0px 0px 3px rgba(0, 79, 89, 0.1)',
+                  backgroundColor: SEARCH_DISABLED ? '#F4F6F6' : '#FFFFFF',
+                  borderColor: SEARCH_DISABLED ? 'rgba(0, 0, 0, 0.1)' : 'primary.main',
+                  boxShadow: SEARCH_DISABLED ? 'none' : '0px 0px 0px 3px rgba(0, 79, 89, 0.1)',
                 },
               }}
             >
               <InputBase
-                placeholder="Search products..."
+                placeholder={SEARCH_DISABLED ? 'Search coming soon...' : 'Search products...'}
                 value={searchQuery}
                 onChange={handleSearchChange}
+                disabled={SEARCH_DISABLED}
                 sx={{
                   color: 'text.primary',
                   width: '100%',
@@ -324,15 +334,19 @@ const Navbar = () => {
                   py: 1,
                   '&::placeholder': {
                     color: 'text.secondary',
-                    opacity: 0.7,
+                    opacity: SEARCH_DISABLED ? 0.5 : 0.7,
+                  },
+                  '&.Mui-disabled': {
+                    color: 'text.secondary',
                   },
                 }}
               />
               <IconButton
                 type="submit"
-                sx={{ 
+                disabled={SEARCH_DISABLED}
+                sx={{
                   color: 'text.secondary',
-                  position: 'absolute', 
+                  position: 'absolute',
                   right: 4,
                   top: '50%',
                   transform: 'translateY(-50%)',
