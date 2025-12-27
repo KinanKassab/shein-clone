@@ -67,17 +67,6 @@ const Navbar = () => {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    setProductSearchQuery(value);
-    if (value.trim()) {
-      setFilters((prev) => ({
-        ...prev,
-        category: 'All',
-        subcategory: 'All',
-      }));
-      navigate(`/search?q=${encodeURIComponent(value)}`, { replace: true });
-    } else {
-      navigate('/', { replace: true });
-    }
   };
 
   const navLinks = [
