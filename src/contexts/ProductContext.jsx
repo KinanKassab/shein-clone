@@ -11,8 +11,19 @@ export const useProducts = () => {
   return context;
 };
 
+const enrichProductsWithOptions = (productsData) => {
+  const defaultSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const defaultColors = ['Black', 'White', 'Blue', 'Gray', 'Navy', 'Red'];
+
+  return productsData.map((product) => ({
+    ...product,
+    sizes: product.sizes || defaultSizes,
+    colors: product.colors || defaultColors,
+  }));
+};
+
 export const ProductProvider = ({ children }) => {
-  const [allProducts] = useState(products);
+  const [allProducts] = useState(() => enrichProductsWithOptions(products));
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
     category: 'All',
@@ -125,7 +136,8 @@ export const ProductProvider = ({ children }) => {
   }, [allProducts]);
 
   const getProductById = (id) => {
-    return allProducts.find((product) => product.id === parseInt(id));
+    const idString = String(id);
+    return allProducts.find((product) => String(product.id) === idString);
   };
 
   const getProductsByCategory = (category) => {

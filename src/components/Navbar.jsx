@@ -30,7 +30,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { cartItemCount } = useCart();
-  const { setSearchQuery: setProductSearchQuery } = useProducts();
+  const { setSearchQuery: setProductSearchQuery, setFilters } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -55,6 +55,11 @@ const Navbar = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      setFilters((prev) => ({
+        ...prev,
+        category: 'All',
+        subcategory: 'All',
+      }));
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
@@ -64,6 +69,11 @@ const Navbar = () => {
     setSearchQuery(value);
     setProductSearchQuery(value);
     if (value.trim()) {
+      setFilters((prev) => ({
+        ...prev,
+        category: 'All',
+        subcategory: 'All',
+      }));
       navigate(`/search?q=${encodeURIComponent(value)}`, { replace: true });
     } else {
       navigate('/', { replace: true });

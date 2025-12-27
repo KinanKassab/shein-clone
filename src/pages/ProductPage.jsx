@@ -39,18 +39,32 @@ const ProductPage = () => {
     const foundProduct = getProductById(id);
     if (foundProduct) {
       setProduct(foundProduct);
-      setSelectedSize(foundProduct.sizes[0]);
-      setSelectedColor(foundProduct.colors[0]);
+      if (foundProduct.sizes && foundProduct.sizes.length > 0) {
+        setSelectedSize(foundProduct.sizes[0]);
+      }
+      if (foundProduct.colors && foundProduct.colors.length > 0) {
+        setSelectedColor(foundProduct.colors[0]);
+      }
     }
   }, [id, getProductById]);
 
   if (!product) {
     return (
       <Container sx={{ py: 4, textAlign: 'center' }}>
-        <Typography variant="h5">Product not found</Typography>
-        <Button onClick={() => navigate('/')} sx={{ mt: 2 }}>
-          Go Back Home
-        </Button>
+        <Typography variant="h5" sx={{ mb: 1 }}>
+          Product not found
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          The product you're looking for doesn't exist or may have been removed.
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Button onClick={() => navigate('/')} variant="contained">
+            Back to Home
+          </Button>
+          <Button onClick={() => navigate(-1)} variant="outlined">
+            Go Back
+          </Button>
+        </Box>
       </Container>
     );
   }
