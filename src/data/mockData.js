@@ -62,6 +62,23 @@ export const categories = [
 
 export const products = [
   {
+    id: 1,
+    name: 'Manfinity Mode Men Slant Pocket Suit Pants Without Belt',
+    category: 'Men',
+    subcategory: 'Pants',
+    price: 26.42,
+    originalPrice: 31.7,
+    link: 'https://www.shein.com/a-p-24061300.html',
+    images: [
+      'https://img.ltwebstatic.com/images3_pi/2023/10/06/76/169656534558ff800d0ed278203a266d3a9138ef60_thumbnail_405x552.jpg',
+      'https://img.ltwebstatic.com/images3_pi/2023/10/06/f5/16965653580a454831e26aea5f6d2a4773721b47b8.jpg'
+    ],
+    description: 'Elegant and comfortable design, perfect for daily wear and special occasions.',
+    inStock: true,
+    rating: 4.73,
+    reviews: 1001
+  },
+  {
     id: '190526205',
     name: 'Manfinity EMRG Men\'s Solid Color Drawstring Waist Pocket Casual Loose Fit Sweatpants Grey Sweatpants Baggy Sweatpants Grey Joggers Men Pro Club Sweat Pants Long Pants Sweat Pants Man Grey Baggy Sweatpants,Baggy Pants,Track Pants,Jogging,Baggy',
     category: 'Men',
