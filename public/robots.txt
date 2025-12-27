@@ -8,4 +8,4 @@ Disallow: /cart
 Disallow: /checkout
 
 # Sitemap location
-Sitemap: https://lookystore.com/sitemap.xml
+Sitemap: https://www.shoplooky.com/sitemap.xml
