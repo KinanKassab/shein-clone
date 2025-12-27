@@ -52,8 +52,6 @@ const Homepage = () => {
     setSearchQuery(query);
   }, [location.search, setSearchQuery]);
 
-  const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '24', '26', '28', '30', '32', '34', '36'];
-  const allColors = ['Pink', 'Blue', 'White', 'Black', 'Gray', 'Yellow', 'Navy', 'Red', 'Beige'];
 
   useEffect(() => {
     // Reset displayed products when filters change
@@ -61,12 +59,10 @@ const Homepage = () => {
   }, [filters, sortBy]);
 
   useEffect(() => {
-    // Infinite scroll observer
-    const productsToDisplay = searchQuery ? products : recommendedProducts;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && displayedProducts < productsToDisplay.length) {
-          setDisplayedProducts((prev) => Math.min(prev + 12, productsToDisplay.length));
+        if (entries[0].isIntersecting && displayedProducts < products.length) {
+          setDisplayedProducts((prev) => Math.min(prev + 12, products.length));
         }
       },
       { threshold: 0.1 }
@@ -81,7 +77,7 @@ const Homepage = () => {
         observer.unobserve(observerRef.current);
       }
     };
-  }, [displayedProducts, products.length, recommendedProducts.length, searchQuery]);
+  }, [displayedProducts, products.length]);
 
   const handleQuickAdd = (product, e) => {
     e.preventDefault();
@@ -98,23 +94,6 @@ const Homepage = () => {
     }));
   };
 
-  const handleSizeToggle = (size) => {
-    setFilters((prev) => ({
-      ...prev,
-      sizes: prev.sizes.includes(size)
-        ? prev.sizes.filter((s) => s !== size)
-        : [...prev.sizes, size],
-    }));
-  };
-
-  const handleColorToggle = (color) => {
-    setFilters((prev) => ({
-      ...prev,
-      colors: prev.colors.includes(color)
-        ? prev.colors.filter((c) => c !== color)
-        : [...prev.colors, color],
-    }));
-  };
 
   return (
     <Box sx={{ 
@@ -627,51 +606,15 @@ const Homepage = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} md={3}>
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                      Sizes
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                      {allSizes.map((size) => (
-                        <Chip
-                          key={size}
-                          label={size}
-                          onClick={() => handleSizeToggle(size)}
-                          color={filters.sizes.includes(size) ? 'primary' : 'default'}
-                          size="small"
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                      Colors
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                      {allColors.map((color) => (
-                        <Chip
-                          key={color}
-                          label={color}
-                          onClick={() => handleColorToggle(color)}
-                          color={filters.colors.includes(color) ? 'primary' : 'default'}
-                          size="small"
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                </Grid>
               </Grid>
             </AccordionDetails>
           </Accordion>
         )}
 
-        {/* You Might Also Like / Handpicked for You */}
+        {/* Featured Products */}
         {!searchQuery && (
           <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
-            You Might Also Like
+            Featured Products
           </Typography>
         )}
         {searchQuery && (
@@ -679,7 +622,7 @@ const Homepage = () => {
             Search Results for "{searchQuery}"
           </Typography>
         )}
-        {(searchQuery ? products : recommendedProducts).length === 0 ? (
+        {products.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               No products found
@@ -724,7 +667,7 @@ const Homepage = () => {
           </Grid>
         ) : (
           <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
-            {(searchQuery ? products : recommendedProducts).slice(0, displayedProducts).map((product, index) => (
+            {products.slice(0, displayedProducts).map((product, index) => (
               <Grid 
                 item 
                 xs={6} 
@@ -749,7 +692,7 @@ const Homepage = () => {
         )}
 
         {/* Infinite Scroll Trigger - Using Skeleton instead of CircularProgress */}
-        {displayedProducts < (searchQuery ? products : recommendedProducts).length && (
+        {displayedProducts < products.length && (
           <Box ref={observerRef} sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
             <Grid container spacing={3}>
               {[...Array(4)].map((_, index) => (
