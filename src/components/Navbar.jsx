@@ -60,7 +60,7 @@ const Navbar = () => {
         category: 'All',
         subcategory: 'All',
       }));
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
