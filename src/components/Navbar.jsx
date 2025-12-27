@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   AppBar,
@@ -17,6 +17,7 @@ import {
   Button,
   Container,
 } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import SearchIcon from '../assets/icons/SearchIcon';
 import CartIcon from '../assets/icons/CartIcon';
 import MenuIcon from '../assets/icons/MenuIcon';
@@ -34,6 +35,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const debounceTimerRef = useRef(null);
 
   // Handle scroll effect
   useEffect(() => {
@@ -52,6 +54,15 @@ const Navbar = () => {
     setProductSearchQuery(query);
   }, [location.search, setProductSearchQuery]);
 
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -60,24 +71,44 @@ const Navbar = () => {
         category: 'All',
         subcategory: 'All',
       }));
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    setProductSearchQuery(value);
-    if (value.trim()) {
-      setFilters((prev) => ({
-        ...prev,
-        category: 'All',
-        subcategory: 'All',
-      }));
-      navigate(`/search?q=${encodeURIComponent(value)}`, { replace: true });
-    } else {
-      navigate('/', { replace: true });
+
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
+
+    // Debounce the actual search
+    debounceTimerRef.current = setTimeout(() => {
+      setProductSearchQuery(value);
+      if (value.trim()) {
+        setFilters((prev) => ({
+          ...prev,
+          category: 'All',
+          subcategory: 'All',
+        }));
+        navigate(`/search?q=${encodeURIComponent(value.trim())}`, { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
+    }, 300);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setProductSearchQuery('');
+    setFilters((prev) => ({
+      ...prev,
+      category: 'All',
+      subcategory: 'All',
+    }));
+    navigate('/', { replace: true });
   };
 
   const navLinks = [
@@ -179,7 +210,7 @@ const Navbar = () => {
                     color: 'text.primary',
                     width: '100%',
                     pl: 3,
-                    pr: 4,
+                    pr: searchQuery ? 10 : 4,
                     py: 1,
                     fontSize: '0.95rem',
                     '&::placeholder': {
@@ -188,11 +219,31 @@ const Navbar = () => {
                     },
                   }}
                 />
+                {searchQuery && (
+                  <IconButton
+                    onClick={handleClearSearch}
+                    sx={{
+                      color: 'text.secondary',
+                      position: 'absolute',
+                      right: 40,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      p: 1,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        color: 'error.main',
+                        transform: 'translateY(-50%) scale(1.1)',
+                      },
+                    }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                )}
                 <IconButton
                   type="submit"
-                  sx={{ 
+                  sx={{
                     color: 'text.secondary',
-                    position: 'absolute', 
+                    position: 'absolute',
                     right: 4,
                     top: '50%',
                     transform: 'translateY(-50%)',
@@ -312,7 +363,7 @@ const Navbar = () => {
                   color: 'text.primary',
                   width: '100%',
                   pl: 2,
-                  pr: 4,
+                  pr: searchQuery ? 10 : 4,
                   py: 1,
                   '&::placeholder': {
                     color: 'text.secondary',
@@ -320,11 +371,30 @@ const Navbar = () => {
                   },
                 }}
               />
+              {searchQuery && (
+                <IconButton
+                  onClick={handleClearSearch}
+                  sx={{
+                    color: 'text.secondary',
+                    position: 'absolute',
+                    right: 40,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    p: 1,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      color: 'error.main',
+                    },
+                  }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              )}
               <IconButton
                 type="submit"
-                sx={{ 
+                sx={{
                   color: 'text.secondary',
-                  position: 'absolute', 
+                  position: 'absolute',
                   right: 4,
                   top: '50%',
                   transform: 'translateY(-50%)',
