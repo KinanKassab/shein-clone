@@ -66,7 +66,7 @@ const ProductCard = ({ product }) => {
             lineHeight: 1.2,
           }}
         >
-          {product.price} SYP
+          {product.price.toLocaleString()} SYP
         </Typography>
 
         {/* Product Title - Short, single line, truncated */}
