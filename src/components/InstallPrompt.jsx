@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Box, Button, Card, Typography, IconButton, Slide, Avatar, useTheme, useMediaQuery } from '@mui/material';
-import { Close, GetApp, Storefront } from '@mui/icons-material'; // Added Storefront for placeholder icon
+import { Close, GetApp, Storefront } from '@mui/icons-material';
 
 const InstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -8,6 +8,7 @@ const InstallPrompt = () => {
   const [isInstalled, setIsInstalled] = useState(false);
   
   const theme = useTheme();
+  // eslint-disable-next-line no-unused-vars
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
@@ -77,14 +78,13 @@ const InstallPrompt = () => {
           position: 'fixed',
           bottom: { xs: 20, md: 32 },
           left: { xs: 16, md: 32 },
-          // Constrain width but allow it to breathe
           width: 'calc(100% - 32px)',
           maxWidth: 420,
           zIndex: 1300,
-          overflow: 'visible', // For the close button if we wanted it floating
+          overflow: 'visible',
           borderRadius: 4,
           // Glassmorphism effect
-          background: 'rgba(255, 255, 255, 0.9)',
+          background: 'rgba(255, 255, 255, 0.95)', // Increased opacity slightly for better text contrast
           backdropFilter: 'blur(12px)',
           border: '1px solid rgba(255, 255, 255, 0.6)',
           boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
@@ -94,17 +94,24 @@ const InstallPrompt = () => {
           {/* Header Section: Icon + Text + Close */}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
             
-            {/* App Icon / Logo Placeholder */}
+            {/* --- الشعار / الأيقونة --- */}
             <Avatar
               variant="rounded"
+              // هام: تأكد أن ملف الصورة موجود في مجلد public
+              src="/logo.png" 
+              alt="LookyStore Logo"
               sx={{
                 width: 56,
                 height: 56,
-                bgcolor: 'primary.main',
+                bgcolor: 'white', // خلفية بيضاء لتبرز اللوجو
                 boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                borderRadius: 2.5
+                borderRadius: 2.5,
+                p: 0.5, // حشوة صغيرة لكي لا يلامس اللوجو الحواف
+                '& img': { objectFit: 'contain' } // لضمان ظهور اللوجو كاملاً
               }}
             >
+              {/* أيقونة بديلة تظهر في حال فشل تحميل الصورة */}
+              <Storefront fontSize="large" sx={{ color: 'primary.main' }} /> 
             </Avatar>
 
             <Box sx={{ flex: 1, mt: 0.5 }}>
@@ -174,7 +181,7 @@ const InstallPrompt = () => {
                 borderRadius: 2.5,
                 textTransform: 'none',
                 fontWeight: 700,
-                background: 'linear-gradient(135deg, #007FFF 0%, #0059B2 100%)', // Customize your brand color here
+                background: 'linear-gradient(135deg, #007FFF 0%, #0059B2 100%)',
                 boxShadow: '0 4px 14px rgba(0, 127, 255, 0.4)',
                 '&:hover': {
                   boxShadow: '0 6px 20px rgba(0, 127, 255, 0.6)',
