@@ -1,40 +1,41 @@
 import { useState, useEffect } from 'react';
-import { Box, Button, Card, Typography, IconButton, Slide } from '@mui/material';
-import { Close, GetApp } from '@mui/icons-material';
+import { Box, Button, Card, Typography, IconButton, Slide, Avatar, useTheme, useMediaQuery } from '@mui/material';
+import { Close, GetApp, Storefront } from '@mui/icons-material'; // Added Storefront for placeholder icon
 
 const InstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    // Check if app is already installed
+    // 1. Check if app is in standalone mode (already installed)
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
       return;
     }
 
-    // Check if already dismissed
+    // 2. Check if user recently dismissed the prompt
     const dismissed = localStorage.getItem('pwa-install-dismissed');
     if (dismissed) {
       const dismissedTime = parseInt(dismissed, 10);
       const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24);
-      // Show again after 7 days
-      if (daysSinceDismissed < 7) {
-        return;
-      }
+      if (daysSinceDismissed < 7) return; // Wait 7 days before showing again
     }
 
-    // Listen for beforeinstallprompt event
+    // 3. Capture the event
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowPrompt(true);
+      // Add a small delay for better UX (don't pop up immediately on load)
+      setTimeout(() => setShowPrompt(true), 3000);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
-    // Check if app is installed after a delay
+    // 4. Double check installation status
     setTimeout(() => {
       if (window.matchMedia('(display-mode: standalone)').matches) {
         setIsInstalled(true);
@@ -48,18 +49,13 @@ const InstallPrompt = () => {
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) {
-      return;
-    }
+    if (!deferredPrompt) return;
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
       setIsInstalled(true);
-    } else {
-      console.log('User dismissed the install prompt');
     }
     
     setDeferredPrompt(null);
@@ -71,73 +67,125 @@ const InstallPrompt = () => {
     localStorage.setItem('pwa-install-dismissed', Date.now().toString());
   };
 
-  if (isInstalled || !showPrompt) {
-    return null;
-  }
+  if (isInstalled || !showPrompt) return null;
 
   return (
     <Slide direction="up" in={showPrompt} mountOnEnter unmountOnExit>
       <Card
+        elevation={0}
         sx={{
           position: 'fixed',
-          bottom: { xs: 16, md: 24 },
-          left: { xs: 16, md: 24 },
-          right: { xs: 16, md: 'auto' },
-          maxWidth: { xs: 'calc(100% - 32px)', md: 400 },
+          bottom: { xs: 20, md: 32 },
+          left: { xs: 16, md: 32 },
+          // Constrain width but allow it to breathe
+          width: 'calc(100% - 32px)',
+          maxWidth: 420,
           zIndex: 1300,
-          p: 2,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-          borderRadius: 3,
-          background: 'linear-gradient(145deg, #ffffff, #F4F6F6)',
-          border: '1px solid rgba(0, 79, 89, 0.2)',
+          overflow: 'visible', // For the close button if we wanted it floating
+          borderRadius: 4,
+          // Glassmorphism effect
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255, 255, 255, 0.6)',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5, fontSize: { xs: '1rem', sm: '1.1rem' } }}>
-              Install LookyStore
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
-              Install our app for a better experience! Get quick access, offline browsing, and faster loading.
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              <Button
-                variant="contained"
-                startIcon={<GetApp />}
-                onClick={handleInstall}
-                sx={{
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                  px: 2,
+        <Box sx={{ p: 2.5 }}>
+          {/* Header Section: Icon + Text + Close */}
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+            
+            {/* App Icon / Logo Placeholder */}
+            <Avatar
+              variant="rounded"
+              sx={{
+                width: 56,
+                height: 56,
+                bgcolor: 'primary.main',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                borderRadius: 2.5
+              }}
+            >
+               {/* Replace this Icon with <img src="/logo.png" /> */}
+              <Storefront fontSize="large" sx={{ color: 'white' }} /> 
+            </Avatar>
+
+            <Box sx={{ flex: 1, mt: 0.5 }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontWeight: 800, 
+                  lineHeight: 1.2,
+                  color: 'text.primary',
+                  mb: 0.5
                 }}
               >
-                Install Now
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={handleDismiss}
-                sx={{
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                Get LookyStore
+              </Typography>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: 'text.secondary', 
+                  lineHeight: 1.5,
+                  fontWeight: 500
                 }}
               >
-                Maybe Later
-              </Button>
+                Add to home screen for faster access and a fullscreen experience.
+              </Typography>
             </Box>
+
+            <IconButton
+              size="small"
+              onClick={handleDismiss}
+              sx={{
+                color: 'text.disabled',
+                transform: 'translate(4px, -4px)',
+                '&:hover': { color: 'text.primary', bgcolor: 'rgba(0,0,0,0.05)' }
+              }}
+            >
+              <Close fontSize="small" />
+            </IconButton>
           </Box>
-          <IconButton
-            size="small"
-            onClick={handleDismiss}
-            sx={{
-              mt: -1,
-              mr: -1,
-            }}
-          >
-            <Close fontSize="small" />
-          </IconButton>
+
+          {/* Action Buttons */}
+          <Box sx={{ display: 'flex', gap: 1.5 }}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={handleDismiss}
+              sx={{
+                borderRadius: 2.5,
+                textTransform: 'none',
+                fontWeight: 600,
+                color: 'text.secondary',
+                borderColor: 'divider',
+                '&:hover': {
+                  borderColor: 'text.secondary',
+                  bgcolor: 'transparent'
+                }
+              }}
+            >
+              Not now
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              disableElevation
+              startIcon={<GetApp />}
+              onClick={handleInstall}
+              sx={{
+                borderRadius: 2.5,
+                textTransform: 'none',
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #007FFF 0%, #0059B2 100%)', // Customize your brand color here
+                boxShadow: '0 4px 14px rgba(0, 127, 255, 0.4)',
+                '&:hover': {
+                  boxShadow: '0 6px 20px rgba(0, 127, 255, 0.6)',
+                }
+              }}
+            >
+              Install
+            </Button>
+          </Box>
         </Box>
       </Card>
     </Slide>
@@ -145,5 +193,3 @@ const InstallPrompt = () => {
 };
 
 export default InstallPrompt;
-
-
