@@ -75,7 +75,6 @@ const ProductPage = () => {
       return;
     }
     addToCart(product, selectedSize, selectedColor, quantity);
-    alert('Added to cart!');
   };
 
   const handleNextImage = () => {
