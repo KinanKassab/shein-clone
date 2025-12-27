@@ -1,0 +1,11 @@
+# robots.txt for LookyStore
+
+User-agent: *
+Allow: /
+
+# Disallow user-specific pages
+Disallow: /cart
+Disallow: /checkout
+
+# Sitemap location
+Sitemap: https://lookystore.com/sitemap.xml
