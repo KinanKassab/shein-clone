@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   AppBar,
@@ -17,7 +17,6 @@ import {
   Button,
   Container,
 } from '@mui/material';
-import { Close as CloseIcon } from '@mui/icons-material';
 import SearchIcon from '../assets/icons/SearchIcon';
 import CartIcon from '../assets/icons/CartIcon';
 import MenuIcon from '../assets/icons/MenuIcon';
@@ -35,7 +34,6 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const debounceTimerRef = useRef(null);
 
   // Handle scroll effect
   useEffect(() => {
@@ -54,15 +52,6 @@ const Navbar = () => {
     setProductSearchQuery(query);
   }, [location.search, setProductSearchQuery]);
 
-  // Cleanup debounce timer on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, []);
-
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -71,44 +60,24 @@ const Navbar = () => {
         category: 'All',
         subcategory: 'All',
       }));
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-
-    // Clear existing timer
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
+    setProductSearchQuery(value);
+    if (value.trim()) {
+      setFilters((prev) => ({
+        ...prev,
+        category: 'All',
+        subcategory: 'All',
+      }));
+      navigate(`/search?q=${encodeURIComponent(value)}`, { replace: true });
+    } else {
+      navigate('/', { replace: true });
     }
-
-    // Debounce the actual search
-    debounceTimerRef.current = setTimeout(() => {
-      setProductSearchQuery(value);
-      if (value.trim()) {
-        setFilters((prev) => ({
-          ...prev,
-          category: 'All',
-          subcategory: 'All',
-        }));
-        navigate(`/search?q=${encodeURIComponent(value.trim())}`, { replace: true });
-      } else {
-        navigate('/', { replace: true });
-      }
-    }, 300);
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setProductSearchQuery('');
-    setFilters((prev) => ({
-      ...prev,
-      category: 'All',
-      subcategory: 'All',
-    }));
-    navigate('/', { replace: true });
   };
 
   const navLinks = [
@@ -210,7 +179,7 @@ const Navbar = () => {
                     color: 'text.primary',
                     width: '100%',
                     pl: 3,
-                    pr: searchQuery ? 10 : 4,
+                    pr: 4,
                     py: 1,
                     fontSize: '0.95rem',
                     '&::placeholder': {
@@ -219,31 +188,11 @@ const Navbar = () => {
                     },
                   }}
                 />
-                {searchQuery && (
-                  <IconButton
-                    onClick={handleClearSearch}
-                    sx={{
-                      color: 'text.secondary',
-                      position: 'absolute',
-                      right: 40,
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      p: 1,
-                      transition: 'all 0.2s ease',
-                      '&:hover': {
-                        color: 'error.main',
-                        transform: 'translateY(-50%) scale(1.1)',
-                      },
-                    }}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                )}
                 <IconButton
                   type="submit"
-                  sx={{
+                  sx={{ 
                     color: 'text.secondary',
-                    position: 'absolute',
+                    position: 'absolute', 
                     right: 4,
                     top: '50%',
                     transform: 'translateY(-50%)',
@@ -303,34 +252,53 @@ const Navbar = () => {
             )}
 
             {/* Cart Icon */}
-            <IconButton 
-              component={Link} 
+            <IconButton
+              component={Link}
               to="/cart"
               sx={{
+                ml: { xs: 0, md: 1 }, // Add some spacing on desktop
                 position: 'relative',
-                color: 'text.primary',
-                transition: 'all 0.3s ease',
-                p: 1.5,
-                  '&:hover': {
-                    bgcolor: 'rgba(0, 79, 89, 0.08)',
-                    transform: 'scale(1.1)',
-                  },
+                width: 48, 
+                height: 48,
+                bgcolor: '#F4F6F6', // Subtle background circle
+                color: '#022B30',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  bgcolor: '#004F59', // Theme Dark Teal on hover
+                  color: '#FFFFFF',   // White icon on hover
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(0, 79, 89, 0.2)',
+                },
               }}
             >
-              <Badge 
-                badgeContent={cartItemCount} 
-                color="error"
+              <Badge
+                badgeContent={cartItemCount}
+                max={99}
                 sx={{
                   '& .MuiBadge-badge': {
-                    fontWeight: 600,
-                    fontSize: '0.7rem',
+                    bgcolor: '#FF5252', // Vibrant Coral/Red
+                    color: '#FFFFFF',
+                    fontWeight: 700,
+                    fontSize: '0.75rem',
+                    // The border creates a clean separation between icon and badge
+                    border: '2px solid #FFFFFF', 
                     minWidth: 20,
                     height: 20,
-                    animation: cartItemCount > 0 ? 'pulse 2s ease-in-out infinite' : 'none',
+                    padding: '0 4px',
+                    // Smoother pulse animation with shadow
+                    animation: cartItemCount > 0 ? 'pulse 2s infinite' : 'none',
+                    '@keyframes pulse': {
+                      '0%': { boxShadow: '0 0 0 0 rgba(255, 82, 82, 0.4)' },
+                      '70%': { boxShadow: '0 0 0 6px rgba(255, 82, 82, 0)' },
+                      '100%': { boxShadow: '0 0 0 0 rgba(255, 82, 82, 0)' },
+                    },
                   },
                 }}
               >
-                <CartIcon color="currentColor" />
+                {/* Ensure Icon size is balanced */}
+                <Box sx={{ width: 24, height: 24, display: 'flex' }}>
+                   <CartIcon color="currentColor" />
+                </Box>
               </Badge>
             </IconButton>
           </Box>
@@ -363,7 +331,7 @@ const Navbar = () => {
                   color: 'text.primary',
                   width: '100%',
                   pl: 2,
-                  pr: searchQuery ? 10 : 4,
+                  pr: 4,
                   py: 1,
                   '&::placeholder': {
                     color: 'text.secondary',
@@ -371,30 +339,11 @@ const Navbar = () => {
                   },
                 }}
               />
-              {searchQuery && (
-                <IconButton
-                  onClick={handleClearSearch}
-                  sx={{
-                    color: 'text.secondary',
-                    position: 'absolute',
-                    right: 40,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    p: 1,
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      color: 'error.main',
-                    },
-                  }}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              )}
               <IconButton
                 type="submit"
-                sx={{
+                sx={{ 
                   color: 'text.secondary',
-                  position: 'absolute',
+                  position: 'absolute', 
                   right: 4,
                   top: '50%',
                   transform: 'translateY(-50%)',
