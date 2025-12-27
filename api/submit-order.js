@@ -67,10 +67,13 @@ export default async function handler(req, res) {
     message += `📦 *Items:*\n`;
     items.forEach((item, index) => {
       const itemTotal = (item.price * item.quantity).toFixed(2);
-      const sizeColor = item.size && item.color 
-        ? ` (${item.size}, ${item.color})` 
+      const sizeColor = item.size && item.color
+        ? ` (${item.size}, ${item.color})`
         : '';
-      message += `${index + 1}. [${escapeMarkdown(item.name)}](${item.link})${escapeMarkdown(sizeColor)} × ${item.quantity}\n`;
+      // Format product name as clickable link (don't escape the URL for Markdown)
+      const productName = escapeMarkdown(item.name);
+      const productLink = item.link || '#';
+      message += `${index + 1}\\. [${productName}](${productLink})${escapeMarkdown(sizeColor)} × ${item.quantity}\n`;
       message += `   💰 ${itemTotal} SYP\n`;
     });
 

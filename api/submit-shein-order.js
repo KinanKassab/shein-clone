@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
     // Product information
     message += `🛒 *Product Details:*\n`;
-    message += `🔗 *Product URL:* [${escapeMarkdown(product.url)}](${product.url})\n`;
+    message += `🔗 *Product URL:* [View SHEIN Product](${product.url})\n`;
     message += `📦 *Quantity:* ${product.quantity}\n\n`;
 
     // Order number and date
