@@ -29,7 +29,7 @@ export const ProductProvider = ({ children }) => {
     category: 'All',
     subcategory: 'All',
     minPrice: 0,
-    maxPrice: 1000,
+    maxPrice: 500000,
     sizes: [],
     colors: [],
   });
