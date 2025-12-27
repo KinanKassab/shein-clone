@@ -105,8 +105,6 @@ const InstallPrompt = () => {
                 borderRadius: 2.5
               }}
             >
-               {/* Replace this Icon with <img src="/logo.png" /> */}
-              <Storefront fontSize="large" sx={{ color: 'white' }} /> 
             </Avatar>
 
             <Box sx={{ flex: 1, mt: 0.5 }}>
